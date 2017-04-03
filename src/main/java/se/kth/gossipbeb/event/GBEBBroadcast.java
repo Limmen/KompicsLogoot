@@ -1,7 +1,6 @@
 package se.kth.gossipbeb.event;
 
 import se.sics.kompics.KompicsEvent;
-import se.sics.kompics.network.Msg;
 
 import java.io.Serializable;
 

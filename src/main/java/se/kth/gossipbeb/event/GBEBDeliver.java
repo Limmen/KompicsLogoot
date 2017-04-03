@@ -21,4 +21,8 @@ public class GBEBDeliver implements KompicsEvent, Serializable {
     public KompicsEvent getPayload() {
         return payload;
     }
+
+    public KAddress getSource() {
+        return source;
+    }
 }

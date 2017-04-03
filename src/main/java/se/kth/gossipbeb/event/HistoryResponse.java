@@ -1,9 +1,7 @@
 package se.kth.gossipbeb.event;
 
-import se.kth.gossipbeb.component.GBEB;
 import se.kth.gossipbeb.component.Pair;
 import se.sics.kompics.KompicsEvent;
-import se.sics.kompics.network.Msg;
 import se.sics.ktoolbox.util.network.KAddress;
 
 import java.io.Serializable;
