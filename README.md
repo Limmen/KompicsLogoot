@@ -14,4 +14,4 @@ mvn clean install
 
 ```sh
 java -Dlog4j.configuration=file:${LOG4J_PROPERTIES_PATH} -Dconfig.file=${CONFIG_FILE_PATH} -jar ${JAR}
-```# ID2210_Peers-To-Peers
+```

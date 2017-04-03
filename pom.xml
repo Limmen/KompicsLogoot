@@ -10,8 +10,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
-        <kompics.version>0.9.1-SNAPSHOT</kompics.version>
-        <ktoolbox.version>2.0.1-SNAPSHOT</ktoolbox.version>
+        <kompics.version>0.9.4-SNAPSHOT</kompics.version>
+        <ktoolbox.version>2.0.2-SNAPSHOT</ktoolbox.version>
         <logger.version>1.7.5</logger.version>
     </properties>
     
