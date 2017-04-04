@@ -75,7 +75,6 @@ public class BEBTestAppComp extends ComponentDefinition {
         GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
         ArrayList<CRBDeliver> delivered = new ArrayList();
         gv.setValue(selfAdr.getId().toString(), delivered);
-
     }
 
     Handler handleStart = new Handler<Start>() {
@@ -109,11 +108,9 @@ public class BEBTestAppComp extends ComponentDefinition {
     Handler<CRBDeliver> handleBroadCast = new Handler<CRBDeliver>() {
         @Override
         public void handle(CRBDeliver crbDeliver) {
-            //LOG.info("{}received broadcast from:{}", logPrefix, crbDeliver.getSource());
             GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
             ArrayList<CRBDeliver> delivered = gv.getValue(selfAdr.getId().toString(), ArrayList.class);
             delivered.add(crbDeliver);
-            //LOG.info("Received, delivered size: " + delivered.size());
             gv.setValue(selfAdr.getId().toString(), delivered);
         }
     };

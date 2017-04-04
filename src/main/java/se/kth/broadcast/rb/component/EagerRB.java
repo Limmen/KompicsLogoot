@@ -26,7 +26,7 @@ public class EagerRB extends ComponentDefinition {
     private Negative<ReliableBroadcast> rb = provides(ReliableBroadcast.class);
     //**************************************************************************
 
-    private HashSet<KompicsEvent> delivered;
+    private HashSet<RBData> delivered;
     private KAddress selfAdr;
 
     public EagerRB(Init init) {
@@ -51,10 +51,11 @@ public class EagerRB extends ComponentDefinition {
         @Override
         public void handle(RBData rbData, GBEBDeliver gbebDeliver) {
             LOG.debug("GBEBDeliver received by {}", selfAdr);
-            if (delivered.add(rbData.getMsg())) {
+            if (!delivered.contains(rbData)) {
+                delivered.add(rbData);
                 LOG.debug("RBDeliver sent by {}", selfAdr);
                 trigger(new RBDeliver(rbData.getSource(), rbData.getMsg()), rb);
-                trigger(new GBEBBroadcast(gbebDeliver.getPayload()), gbeb);
+                trigger(new GBEBBroadcast(rbData), gbeb);
             }
         }
     };
@@ -63,7 +64,6 @@ public class EagerRB extends ComponentDefinition {
     public static class Init extends se.sics.kompics.Init<EagerRB> {
 
         public final KAddress selfAdr;
-
 
         public Init(KAddress selfAdr) {
             this.selfAdr = selfAdr;

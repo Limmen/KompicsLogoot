@@ -54,8 +54,7 @@ public class NoWaitingCB extends ComponentDefinition {
         public void handle(CRBData crbData, RBDeliver rbDeliver) {
             LOG.debug("CRBData received by {} from {}", selfAdr, rbDeliver.getSource());
             if (!delivered.contains(crbData.getMsg())) {
-                for (Pair<KAddress, KompicsEvent> pair :
-                        past) {
+                for (Pair<KAddress, KompicsEvent> pair : past) {
                     if (!delivered.contains(pair.p2)) {
                         trigger(new CRBDeliver(pair.p1, pair.p2), crb);
                         delivered.add(pair.p2);
@@ -64,7 +63,8 @@ public class NoWaitingCB extends ComponentDefinition {
                         }
                     }
                 }
-                trigger(new CRBDeliver(rbDeliver.getSource(), crbData.getMsg()), crb);
+                if (!delivered.contains(crbData.getMsg()))
+                    trigger(new CRBDeliver(rbDeliver.getSource(), crbData.getMsg()), crb);
                 delivered.add(crbData.getMsg());
                 Pair<KAddress, KompicsEvent> pair = new Pair<>(rbDeliver.getSource(), crbData.getMsg());
                 if (!past.contains(pair)) {

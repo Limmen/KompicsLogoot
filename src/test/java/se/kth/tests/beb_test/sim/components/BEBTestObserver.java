@@ -69,7 +69,7 @@ public class BEBTestObserver extends ComponentDefinition {
                     done = false;
             }
             if (done) {
-                LOG.info("Terminating simulation as every node have delivered the broadcast");
+                LOG.info("Terminating simulation as every node have delivered the broadcasts");
                 saveSimulationResult();
                 gv.terminate();
 
@@ -80,11 +80,11 @@ public class BEBTestObserver extends ComponentDefinition {
 
     private void saveSimulationResult() {
         GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
-        for(int i = 0; i < numberOfNodes; i++){
+        for (int i = 0; i < numberOfNodes; i++) {
             Map<Integer, String> nodeState = new HashMap<>();
-            ArrayList<CRBDeliver> delivered = gv.getValue(Integer.toString(i+1), ArrayList.class);
+            ArrayList<CRBDeliver> delivered = gv.getValue(Integer.toString(i + 1), ArrayList.class);
             for (int j = 0; j < delivered.size(); j++) {
-                nodeState.put(j, delivered.get(j).toString());
+                nodeState.put(j, delivered.get(j).getMsg().toString());
             }
             result.put(Integer.toString(i), nodeState);
         }

@@ -1,5 +1,6 @@
 package se.kth.broadcast.gossipbeb.component;
 
+import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.broadcast.gossipbeb.event.GBEBBroadcast;
@@ -74,7 +75,7 @@ public class GBEB extends ComponentDefinition {
             LOG.debug("HistoryRequest received by {}", selfAdr);
             KAddress peer = container.getHeader().getSource();
             KHeader header = new BasicHeader(selfAdr, peer, Transport.TCP);
-            KContentMsg msg = new BasicContentMsg(header, new HistoryResponse(past));
+            KContentMsg msg = new BasicContentMsg(header, new HistoryResponse(ImmutableSet.copyOf(past)));
             LOG.debug("HistoryResponse sent to {} from {}", peer, selfAdr);
             trigger(msg, networkPort);
         }
