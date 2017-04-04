@@ -20,12 +20,7 @@ package se.kth.system;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.app.mngr.AppMngrComp;
-import se.sics.kompics.Channel;
-import se.sics.kompics.Component;
-import se.sics.kompics.ComponentDefinition;
-import se.sics.kompics.Handler;
-import se.sics.kompics.Positive;
-import se.sics.kompics.Start;
+import se.sics.kompics.*;
 import se.sics.kompics.network.Network;
 import se.sics.kompics.timer.Timer;
 import se.sics.ktoolbox.cc.heartbeat.CCHeartbeatPort;
@@ -80,6 +75,7 @@ public class HostMngrComp extends ComponentDefinition {
             trigger(Start.event, bootstrapClientComp.control());
             trigger(Start.event, overlayMngrComp.control());
             trigger(Start.event, appMngrComp.control());
+
         }
     };
 
