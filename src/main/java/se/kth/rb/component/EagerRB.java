@@ -42,18 +42,18 @@ public class EagerRB extends ComponentDefinition {
         @Override
         public void handle(RBBroadcast rBroadcast) {
             LOG.debug("RBBroadcast received by {}", selfAdr);
-            trigger(new GBEBBroadcast(rBroadcast.getMsg()), gbeb);
+            trigger(new GBEBBroadcast(new RBData(selfAdr, rBroadcast.getMsg())), gbeb);
         }
     };
 
 
-    Handler<GBEBDeliver> deliverHandler = new Handler<GBEBDeliver>() {
+    ClassMatchedHandler<RBData, GBEBDeliver> deliverHandler = new ClassMatchedHandler<RBData, GBEBDeliver>() {
         @Override
-        public void handle(GBEBDeliver gbebDeliver) {
+        public void handle(RBData rbData, GBEBDeliver gbebDeliver) {
             LOG.debug("GBEBDeliver received by {}", selfAdr);
-            if (!delivered.add(gbebDeliver.getPayload())) {
+            if (!delivered.add(rbData.getMsg())) {
                 LOG.debug("RBDeliver sent by {}", selfAdr);
-                trigger(new RBDeliver(gbebDeliver.getSource(), gbebDeliver.getPayload()), rb);
+                trigger(new RBDeliver(rbData.getSource(), rbData.getMsg()), rb);
                 trigger(new GBEBBroadcast(gbebDeliver.getPayload()), gbeb);
             }
         }
@@ -63,6 +63,7 @@ public class EagerRB extends ComponentDefinition {
     public static class Init extends se.sics.kompics.Init<EagerRB> {
 
         public final KAddress selfAdr;
+
 
         public Init(KAddress selfAdr) {
             this.selfAdr = selfAdr;
