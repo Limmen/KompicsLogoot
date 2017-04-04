@@ -10,3 +10,6 @@ lib/
 nb-configuration.xml
 
 .idea/
+
+simulation.log
+simulation.log.*
