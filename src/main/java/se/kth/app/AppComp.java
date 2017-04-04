@@ -17,104 +17,104 @@
  */
 package se.kth.app;
 
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.kth.croupier.util.CroupierHelper;
-import se.kth.app.test.Ping;
-import se.kth.app.test.Pong;
-import se.sics.kompics.ClassMatchedHandler;
+import se.kth.app.test.Pang;
+import se.kth.broadcast.crb.event.CRBBroadcast;
+import se.kth.broadcast.crb.event.CRBDeliver;
+import se.kth.broadcast.crb.port.CausalOrderReliableBroadcast;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
 import se.sics.kompics.Positive;
 import se.sics.kompics.Start;
 import se.sics.kompics.network.Network;
-import se.sics.kompics.network.Transport;
+import se.sics.kompics.timer.SchedulePeriodicTimeout;
+import se.sics.kompics.timer.Timeout;
 import se.sics.kompics.timer.Timer;
 import se.sics.ktoolbox.croupier.CroupierPort;
 import se.sics.ktoolbox.croupier.event.CroupierSample;
 import se.sics.ktoolbox.util.identifiable.Identifier;
 import se.sics.ktoolbox.util.network.KAddress;
-import se.sics.ktoolbox.util.network.KContentMsg;
-import se.sics.ktoolbox.util.network.KHeader;
-import se.sics.ktoolbox.util.network.basic.BasicContentMsg;
-import se.sics.ktoolbox.util.network.basic.BasicHeader;
+
+import java.util.UUID;
 
 /**
  * @author Alex Ormenisan <aaor@kth.se>
  */
 public class AppComp extends ComponentDefinition {
 
-  private static final Logger LOG = LoggerFactory.getLogger(AppComp.class);
-  private String logPrefix = " ";
+    private static final Logger LOG = LoggerFactory.getLogger(AppComp.class);
+    private String logPrefix = " ";
 
-  //*******************************CONNECTIONS********************************
-  Positive<Timer> timerPort = requires(Timer.class);
-  Positive<Network> networkPort = requires(Network.class);
-  Positive<CroupierPort> croupierPort = requires(CroupierPort.class);
-  //**************************************************************************
-  private KAddress selfAdr;
+    //*******************************CONNECTIONS********************************
+    Positive<Timer> timerPort = requires(Timer.class);
+    Positive<Network> networkPort = requires(Network.class);
+    Positive<CroupierPort> croupierPort = requires(CroupierPort.class);
+    Positive<CausalOrderReliableBroadcast> broadcastPort = requires(CausalOrderReliableBroadcast.class);
+    //**************************************************************************
+    private KAddress selfAdr;
+    private UUID timeoutId;
+    private final long delay = config().getValue("app.delay", Long.class);
 
-  public AppComp(Init init) {
-    selfAdr = init.selfAdr;
-    logPrefix = "<nid:" + selfAdr.getId() + ">";
-    LOG.info("{}initiating...", logPrefix);
+    public AppComp(Init init) {
+        selfAdr = init.selfAdr;
+        logPrefix = "<nid:" + selfAdr.getId() + ">";
+        LOG.info("{}initiating...", logPrefix);
 
-    subscribe(handleStart, control);
-    subscribe(handleCroupierSample, croupierPort);
-    subscribe(handlePing, networkPort);
-    subscribe(handlePong, networkPort);
-  }
-
-  Handler handleStart = new Handler<Start>() {
-    @Override
-    public void handle(Start event) {
-      LOG.info("{}starting...", logPrefix);
+        subscribe(handleStart, control);
+        subscribe(handleBroadCast, broadcastPort);
+        subscribe(handleCroupierSample, croupierPort);
+        subscribe(handleTimeout, timerPort);
     }
-  };
 
-  Handler handleCroupierSample = new Handler<CroupierSample>() {
-    @Override
-    public void handle(CroupierSample croupierSample) {
-      if (croupierSample.publicSample.isEmpty()) {
-        return;
-      }
-      List<KAddress> sample = CroupierHelper.getSample(croupierSample);
-      for (KAddress peer : sample) {
-        KHeader header = new BasicHeader(selfAdr, peer, Transport.UDP);
-        KContentMsg msg = new BasicContentMsg(header, new Ping());
-        trigger(msg, networkPort);
-      }
-    }
-  };
-
-  ClassMatchedHandler handlePing
-    = new ClassMatchedHandler<Ping, KContentMsg<?, ?, Ping>>() {
-
-      @Override
-      public void handle(Ping content, KContentMsg<?, ?, Ping> container) {
-        LOG.info("{}received ping from:{}", logPrefix, container.getHeader().getSource());
-        trigger(container.answer(new Pong()), networkPort);
-      }
+    Handler handleStart = new Handler<Start>() {
+        @Override
+        public void handle(Start event) {
+            LOG.info("{}starting...", logPrefix);
+            SchedulePeriodicTimeout spt = new SchedulePeriodicTimeout(delay, delay);
+            spt.setTimeoutEvent(new AppCompTimeout(spt));
+            trigger(spt, timerPort);
+            timeoutId = spt.getTimeoutEvent().getTimeoutId();
+        }
     };
 
-  ClassMatchedHandler handlePong
-    = new ClassMatchedHandler<Pong, KContentMsg<?, KHeader<?>, Pong>>() {
-
-      @Override
-      public void handle(Pong content, KContentMsg<?, KHeader<?>, Pong> container) {
-        LOG.info("{}received pong from:{}", logPrefix, container.getHeader().getSource());
-      }
+    protected final Handler<AppCompTimeout> handleTimeout = new Handler<AppCompTimeout>() {
+        @Override
+        public void handle(AppCompTimeout event) {
+            LOG.info("Timeout, triggering broadcast");
+            CRBBroadcast broadcast = new CRBBroadcast(new Pang());
+            trigger(broadcast, broadcastPort);
+        }
     };
 
-  public static class Init extends se.sics.kompics.Init<AppComp> {
+    Handler handleCroupierSample = new Handler<CroupierSample>() {
+        @Override
+        public void handle(CroupierSample croupierSample) {
+        }
+    };
 
-    public final KAddress selfAdr;
-    public final Identifier gradientOId;
+    Handler<CRBDeliver> handleBroadCast = new Handler<CRBDeliver>() {
+        @Override
+        public void handle(CRBDeliver crbDeliver) {
+            LOG.info("{}received broadcast from:{}", logPrefix, crbDeliver.getSource());
+        }
+    };
 
-    public Init(KAddress selfAdr, Identifier gradientOId) {
-      this.selfAdr = selfAdr;
-      this.gradientOId = gradientOId;
+    public static class Init extends se.sics.kompics.Init<AppComp> {
+
+        public final KAddress selfAdr;
+        public final Identifier gradientOId;
+
+        public Init(KAddress selfAdr, Identifier gradientOId) {
+            this.selfAdr = selfAdr;
+            this.gradientOId = gradientOId;
+        }
     }
-  }
+
+    public class AppCompTimeout extends Timeout {
+
+        public AppCompTimeout(SchedulePeriodicTimeout request) {
+            super(request);
+        }
+    }
 }

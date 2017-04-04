@@ -96,7 +96,7 @@ public class AppMngrComp extends ComponentDefinition {
 
     private void connectBroadcast() {
         BroadCastMngrComp.ExtPort bcExtPorts = new BroadCastMngrComp.ExtPort(extPorts.networkPort, extPorts.croupierPort);
-        broadcastMngrComp = create(BroadCastMngrComp.class, new BroadCastMngrComp.Init(bcExtPorts, selfAdr));
+        broadcastMngrComp = create(BroadCastMngrComp.class, new BroadCastMngrComp.Init(bcExtPorts, selfAdr, appComp));
     }
 
     public static class Init extends se.sics.kompics.Init<AppMngrComp> {

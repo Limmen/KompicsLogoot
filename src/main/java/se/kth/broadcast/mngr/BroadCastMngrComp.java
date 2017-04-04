@@ -3,6 +3,7 @@ package se.kth.broadcast.mngr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.broadcast.crb.component.NoWaitingCB;
+import se.kth.broadcast.crb.port.CausalOrderReliableBroadcast;
 import se.kth.broadcast.gossipbeb.component.GBEB;
 import se.kth.broadcast.gossipbeb.port.GossipingBestEffortBroadcast;
 import se.kth.broadcast.rb.component.EagerRB;
@@ -21,11 +22,11 @@ public class BroadCastMngrComp extends ComponentDefinition {
 
     //*****************************CONNECTIONS**********************************
     Positive<Timer> timerPort = requires(Timer.class);
-    Positive<Network> networkPort = requires(Network.class);
     //***************************EXTERNAL_STATE*********************************
     private KAddress selfAdr;
     private ExtPort extPorts;
     //***************************INTERNAL_STATE*********************************
+    private Component appComp;
     private Component cb;
     private Component rb;
     private Component gbeb;
@@ -33,7 +34,7 @@ public class BroadCastMngrComp extends ComponentDefinition {
     public BroadCastMngrComp(Init init) {
         selfAdr = init.selfAdr;
         extPorts = init.extPorts;
-
+        appComp = init.appComp;
         subscribe(handleStart, control);
     }
 
@@ -51,9 +52,10 @@ public class BroadCastMngrComp extends ComponentDefinition {
         cb = create(NoWaitingCB.class, new NoWaitingCB.Init(selfAdr));
         rb = create(EagerRB.class, new EagerRB.Init(selfAdr));
         gbeb = create(GBEB.class, new GBEB.Init(selfAdr));
+        connect(appComp.getNegative(CausalOrderReliableBroadcast.class), cb.getPositive(CausalOrderReliableBroadcast.class), Channel.TWO_WAY);
         connect(cb.getNegative(ReliableBroadcast.class), rb.getPositive(ReliableBroadcast.class), Channel.TWO_WAY);
         connect(rb.getNegative(GossipingBestEffortBroadcast.class), gbeb.getPositive(GossipingBestEffortBroadcast.class), Channel.TWO_WAY);
-        connect(gbeb.getNegative(Network.class), networkPort, Channel.TWO_WAY);
+        connect(gbeb.getNegative(Network.class), extPorts.networkPort, Channel.TWO_WAY);
         connect(gbeb.getNegative(CroupierPort.class), extPorts.croupierPort, Channel.TWO_WAY);
     }
 
@@ -61,10 +63,12 @@ public class BroadCastMngrComp extends ComponentDefinition {
 
         public final ExtPort extPorts;
         public final KAddress selfAdr;
+        public final Component appComp;
 
-        public Init(ExtPort extPorts, KAddress selfAdr) {
+        public Init(ExtPort extPorts, KAddress selfAdr, Component appComp) {
             this.extPorts = extPorts;
             this.selfAdr = selfAdr;
+            this.appComp = appComp;
         }
     }
 

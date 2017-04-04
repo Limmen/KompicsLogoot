@@ -64,7 +64,6 @@ public class NoWaitingCB extends ComponentDefinition {
                         }
                     }
                 }
-
                 trigger(new CRBDeliver(rbDeliver.getSource(), crbData.getMsg()), crb);
                 delivered.add(crbData.getMsg());
                 Pair<KAddress, KompicsEvent> pair = new Pair<>(rbDeliver.getSource(), crbData.getMsg());

@@ -2,12 +2,12 @@ package se.kth.broadcast.gossipbeb.component;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.kth.croupier.util.CroupierHelper;
 import se.kth.broadcast.gossipbeb.event.GBEBBroadcast;
 import se.kth.broadcast.gossipbeb.event.GBEBDeliver;
 import se.kth.broadcast.gossipbeb.event.HistoryRequest;
 import se.kth.broadcast.gossipbeb.event.HistoryResponse;
 import se.kth.broadcast.gossipbeb.port.GossipingBestEffortBroadcast;
+import se.kth.croupier.util.CroupierHelper;
 import se.sics.kompics.*;
 import se.sics.kompics.network.Network;
 import se.sics.kompics.network.Transport;
@@ -68,9 +68,9 @@ public class GBEB extends ComponentDefinition {
         }
     };
 
-    protected final ClassMatchedHandler historyRequestHandler = new ClassMatchedHandler<HistoryRequest, KContentMsg<?, KHeader<?>, HistoryRequest>>() {
+    protected final ClassMatchedHandler historyRequestHandler = new ClassMatchedHandler<HistoryRequest, KContentMsg<?, ?, HistoryRequest>>() {
         @Override
-        public void handle(HistoryRequest historyRequest, KContentMsg<?, KHeader<?>, HistoryRequest> container) {
+        public void handle(HistoryRequest historyRequest, KContentMsg<?, ?, HistoryRequest> container) {
             LOG.debug("HistoryRequest received by {}", selfAdr);
             KAddress peer = container.getHeader().getSource();
             KHeader header = new BasicHeader(selfAdr, peer, Transport.TCP);
@@ -80,15 +80,15 @@ public class GBEB extends ComponentDefinition {
         }
     };
 
-    protected final ClassMatchedHandler historyResponseHandler = new ClassMatchedHandler<HistoryResponse, KContentMsg<?, KHeader<?>, HistoryResponse>>() {
+    protected final ClassMatchedHandler historyResponseHandler = new ClassMatchedHandler<HistoryResponse, KContentMsg<?, ?, HistoryResponse>>() {
 
         @Override
-        public void handle(HistoryResponse historyResponse, KContentMsg<?, KHeader<?>, HistoryResponse> container) {
+        public void handle(HistoryResponse historyResponse, KContentMsg<?, ?, HistoryResponse> container) {
             LOG.debug("HistoryResponse received by {} from {}", selfAdr, container.getHeader().getSource());
             HashSet<Pair<KAddress, KompicsEvent>> unseen = new HashSet<>(historyResponse.getHistory());
             unseen.removeAll(past);
-            for (Pair<KAddress, KompicsEvent> pair :
-                    unseen) {
+            //LOG.info("Unseen size: " + unseen.size() + " past size: " + past.size() + "  hist size: " + historyResponse.getHistory().size());
+            for (Pair<KAddress, KompicsEvent> pair : unseen) {
                 LOG.debug("BEBDeliver sent to {}", selfAdr);
                 trigger(new GBEBDeliver(pair.p1, pair.p2), gbeb);
             }

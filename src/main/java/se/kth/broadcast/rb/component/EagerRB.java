@@ -51,7 +51,7 @@ public class EagerRB extends ComponentDefinition {
         @Override
         public void handle(RBData rbData, GBEBDeliver gbebDeliver) {
             LOG.debug("GBEBDeliver received by {}", selfAdr);
-            if (!delivered.add(rbData.getMsg())) {
+            if (delivered.add(rbData.getMsg())) {
                 LOG.debug("RBDeliver sent by {}", selfAdr);
                 trigger(new RBDeliver(rbData.getSource(), rbData.getMsg()), rb);
                 trigger(new GBEBBroadcast(gbebDeliver.getPayload()), gbeb);
