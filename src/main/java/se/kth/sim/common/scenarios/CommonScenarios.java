@@ -15,9 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package se.kth.tests.common.scenarios;
+package se.kth.sim.common.scenarios;
 
-import se.kth.tests.common.operations.CommonOperations;
+import se.kth.sim.common.operations.CommonOperations;
 import se.sics.kompics.simulator.SimulationScenario;
 import se.sics.kompics.simulator.adaptor.distributions.extra.BasicIntSequentialDistribution;
 

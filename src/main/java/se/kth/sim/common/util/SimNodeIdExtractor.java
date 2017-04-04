@@ -15,20 +15,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package se.kth.tests;
+package se.kth.sim.common.util;
 
-import se.kth.tests.common.scenarios.CommonScenarios;
-import se.kth.tests.common.util.ScenarioSetup;
-import se.sics.kompics.simulator.SimulationScenario;
-import se.sics.kompics.simulator.run.LauncherComp;
+import se.sics.kompics.network.Address;
+import se.sics.kompics.simulator.network.identifier.Identifier;
+import se.sics.kompics.simulator.network.identifier.IdentifierExtractor;
+import se.sics.ktoolbox.util.identifiable.basic.IntId;
+import se.sics.ktoolbox.util.network.KAddress;
 
 /**
  * @author Alex Ormenisan <aaor@kth.se>
  */
-public class Main {
-    public static void main(String[] args) {
-        SimulationScenario.setSeed(ScenarioSetup.scenarioSeed);
-        SimulationScenario simpleBootScenario = CommonScenarios.simpleBoot();
-        simpleBootScenario.simulate(LauncherComp.class);
+public class SimNodeIdExtractor implements IdentifierExtractor {
+    @Override
+    public Identifier extract(Address adr) {
+        KAddress usedAdr = (KAddress)adr;
+        int nodeId = ((IntId)usedAdr.getId()).id;
+        return new SimNodeIdentifier(nodeId);
     }
 }

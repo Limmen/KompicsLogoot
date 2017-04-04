@@ -2,7 +2,7 @@ package se.kth.tests.beb_test.sim.operations;
 
 import se.kth.tests.beb_test.sim.components.BEBTestHostMngrComp;
 import se.kth.tests.beb_test.sim.components.BEBTestObserver;
-import se.kth.tests.common.util.ScenarioSetup;
+import se.kth.sim.common.util.ScenarioSetup;
 import se.sics.kompics.network.Address;
 import se.sics.kompics.simulator.adaptor.Operation2;
 import se.sics.kompics.simulator.events.system.StartNodeEvent;

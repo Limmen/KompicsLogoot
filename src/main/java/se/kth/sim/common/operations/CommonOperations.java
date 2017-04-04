@@ -1,8 +1,8 @@
-package se.kth.tests.common.operations;
+package se.kth.sim.common.operations;
 
 import se.kth.system.HostMngrComp;
-import se.kth.tests.common.util.ScenarioSetup;
-import se.kth.tests.common.util.SimNodeIdExtractor;
+import se.kth.sim.common.util.ScenarioSetup;
+import se.kth.sim.common.util.SimNodeIdExtractor;
 import se.sics.kompics.network.Address;
 import se.sics.kompics.simulator.adaptor.Operation;
 import se.sics.kompics.simulator.adaptor.Operation1;

@@ -1,4 +1,4 @@
-package se.kth.tests.common.util;/*
+package se.kth.sim.common.util;/*
  * 2016 Royal Institute of Technology (KTH)
  *
  * LSelector is free software; you can redistribute it and/or

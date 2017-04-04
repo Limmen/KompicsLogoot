@@ -3,9 +3,9 @@ package se.kth.tests.beb_test;
 import org.junit.Assert;
 import org.junit.Test;
 import se.kth.tests.beb_test.sim.scenarios.BEBTestScenarios;
-import se.kth.tests.common.result.SimulationResultMap;
-import se.kth.tests.common.result.SimulationResultSingleton;
-import se.kth.tests.common.util.ScenarioSetup;
+import se.kth.sim.common.result.SimulationResultMap;
+import se.kth.sim.common.result.SimulationResultSingleton;
+import se.kth.sim.common.util.ScenarioSetup;
 import se.sics.kompics.simulator.SimulationScenario;
 import se.sics.kompics.simulator.run.LauncherComp;
 
