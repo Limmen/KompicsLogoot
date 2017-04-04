@@ -1,43 +1,25 @@
-/*
- * 2016 Royal Institute of Technology (KTH)
- *
- * LSelector is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-package se.kth.app.sim;
+package se.kth.tests.common.operations;
 
-import java.util.HashMap;
-import java.util.Map;
-import se.kth.sim.compatibility.SimNodeIdExtractor;
 import se.kth.system.HostMngrComp;
+import se.kth.tests.common.util.ScenarioSetup;
+import se.kth.tests.common.util.SimNodeIdExtractor;
 import se.sics.kompics.network.Address;
-import se.sics.kompics.simulator.SimulationScenario;
 import se.sics.kompics.simulator.adaptor.Operation;
 import se.sics.kompics.simulator.adaptor.Operation1;
-import se.sics.kompics.simulator.adaptor.distributions.extra.BasicIntSequentialDistribution;
 import se.sics.kompics.simulator.events.system.SetupEvent;
 import se.sics.kompics.simulator.events.system.StartNodeEvent;
 import se.sics.kompics.simulator.network.identifier.IdentifierExtractor;
 import se.sics.ktoolbox.omngr.bootstrap.BootstrapServerComp;
 import se.sics.ktoolbox.util.network.KAddress;
 
-/**
- * @author Alex Ormenisan <aaor@kth.se>
- */
-public class ScenarioGen {
+import java.util.HashMap;
+import java.util.Map;
 
-    static Operation<SetupEvent> systemSetupOp = new Operation<SetupEvent>() {
+/**
+ * @author Kim Hammar on 2017-04-04.
+ */
+public class CommonOperations {
+    public static Operation<SetupEvent> systemSetupOp = new Operation<SetupEvent>() {
         @Override
         public SetupEvent generate() {
             return new SetupEvent() {
@@ -49,7 +31,7 @@ public class ScenarioGen {
         }
     };
 
-    static Operation<StartNodeEvent> startBootstrapServerOp = new Operation<StartNodeEvent>() {
+    public static Operation<StartNodeEvent> startBootstrapServerOp = new Operation<StartNodeEvent>() {
 
         @Override
         public StartNodeEvent generate() {
@@ -78,7 +60,7 @@ public class ScenarioGen {
         }
     };
 
-    static Operation1<StartNodeEvent, Integer> startNodeOp = new Operation1<StartNodeEvent, Integer>() {
+    public static Operation1<StartNodeEvent, Integer> startNodeOp = new Operation1<StartNodeEvent, Integer>() {
 
         @Override
         public StartNodeEvent generate(final Integer nodeId) {
@@ -116,36 +98,4 @@ public class ScenarioGen {
             };
         }
     };
-
-    public static SimulationScenario simpleBoot() {
-        SimulationScenario scen = new SimulationScenario() {
-            {
-                StochasticProcess systemSetup = new StochasticProcess() {
-                    {
-                        eventInterArrivalTime(constant(1000));
-                        raise(1, systemSetupOp);
-                    }
-                };
-                StochasticProcess startBootstrapServer = new StochasticProcess() {
-                    {
-                        eventInterArrivalTime(constant(1000));
-                        raise(1, startBootstrapServerOp);
-                    }
-                };
-                StochasticProcess startPeers = new StochasticProcess() {
-                    {
-                        eventInterArrivalTime(uniform(1000, 1100));
-                        raise(100, startNodeOp, new BasicIntSequentialDistribution(1));
-                    }
-                };
-
-                systemSetup.start();
-                startBootstrapServer.startAfterTerminationOf(1000, systemSetup);
-                startPeers.startAfterTerminationOf(1000, startBootstrapServer);
-                terminateAfterTerminationOf(1000*1000, startPeers);
-            }
-        };
-
-        return scen;
-    }
 }

@@ -17,7 +17,6 @@
  */
 package se.kth.system;
 
-import static se.kth.app.sim.ScenarioSetup.scenarioSeed;
 import se.sics.ktoolbox.util.identifiable.BasicBuilders;
 import se.sics.ktoolbox.util.identifiable.BasicIdentifiers;
 import se.sics.ktoolbox.util.identifiable.IdentifierFactory;
@@ -30,15 +29,16 @@ import se.sics.ktoolbox.util.identifiable.overlay.OverlayRegistry;
  * @author Alex Ormenisan <aaor@kth.se>
  */
 public class SystemSetup {
-   public static OverlayId setup() {
-    BasicIdentifiers.registerDefaults2(scenarioSeed);
-    OverlayRegistry.initiate(new OverlayId.BasicTypeFactory((byte) 0), new OverlayId.BasicTypeComparator());
-    byte croupierOwnerId = 1;
-    OverlayRegistry.registerPrefix(OverlayId.BasicTypes.CROUPIER.name(), croupierOwnerId);
+    public static OverlayId setup() {
+        int seed = 1234;
+        BasicIdentifiers.registerDefaults2(seed);
+        OverlayRegistry.initiate(new OverlayId.BasicTypeFactory((byte) 0), new OverlayId.BasicTypeComparator());
+        byte croupierOwnerId = 1;
+        OverlayRegistry.registerPrefix(OverlayId.BasicTypes.CROUPIER.name(), croupierOwnerId);
 
-    IdentifierFactory croupierBaseIdFactory = IdentifierRegistry.lookup(BasicIdentifiers.Values.OVERLAY.toString());
-    OverlayIdFactory croupierIdFactory = new OverlayIdFactory(croupierBaseIdFactory, OverlayId.BasicTypes.CROUPIER,
-      croupierOwnerId);
-    return croupierIdFactory.id(new BasicBuilders.StringBuilder("0"));
-  }
+        IdentifierFactory croupierBaseIdFactory = IdentifierRegistry.lookup(BasicIdentifiers.Values.OVERLAY.toString());
+        OverlayIdFactory croupierIdFactory = new OverlayIdFactory(croupierBaseIdFactory, OverlayId.BasicTypes.CROUPIER,
+                croupierOwnerId);
+        return croupierIdFactory.id(new BasicBuilders.StringBuilder("0"));
+    }
 }
