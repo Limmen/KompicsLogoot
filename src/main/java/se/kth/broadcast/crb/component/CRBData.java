@@ -19,6 +19,14 @@ public class CRBData implements KompicsEvent {
         this.msg = msg;
     }
 
+    @Override
+    public String toString() {
+        return "CRBData{" +
+                "past=" + past +
+                ", msg=" + msg +
+                '}';
+    }
+
     public List<Pair<KAddress, KompicsEvent>> getPast() {
         return past;
     }

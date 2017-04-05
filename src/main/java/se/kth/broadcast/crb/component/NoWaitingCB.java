@@ -42,9 +42,9 @@ public class NoWaitingCB extends ComponentDefinition {
     Handler<CRBBroadcast> broadcastHandler = new Handler<CRBBroadcast>() {
         @Override
         public void handle(CRBBroadcast crbBroadcast) {
-            LOG.debug("CRBBroadcast received by {}", selfAdr);
             KompicsEvent msg = crbBroadcast.getPayload();
-            trigger(new RBBroadcast(new CRBData(past, msg)), rb);
+            LOG.info("CRBBroadcast received by {} {}", selfAdr, past);
+            trigger(new RBBroadcast(new CRBData(new LinkedList<>(past), msg)), rb);
             past.addLast(new Pair<>(selfAdr, msg));
         }
     };
@@ -52,10 +52,11 @@ public class NoWaitingCB extends ComponentDefinition {
     ClassMatchedHandler<CRBData, RBDeliver> deliverHandler = new ClassMatchedHandler<CRBData, RBDeliver>() {
         @Override
         public void handle(CRBData crbData, RBDeliver rbDeliver) {
-            LOG.debug("CRBData received by {} from {}", selfAdr, rbDeliver.getSource());
+            LOG.info("CRBData received by {} from {} {}", selfAdr, rbDeliver.getSource(), crbData);
             if (!delivered.contains(crbData.getMsg())) {
-                for (Pair<KAddress, KompicsEvent> pair : past) {
+                for (Pair<KAddress, KompicsEvent> pair : crbData.getPast()) {
                     if (!delivered.contains(pair.p2)) {
+                        //LOG.info("DELIVERED {} \n{} \n{} \n{}", pair, delivered, past, crbData.getMsg());
                         trigger(new CRBDeliver(pair.p1, pair.p2), crb);
                         delivered.add(pair.p2);
                         if (!past.contains(pair)) {
@@ -63,8 +64,7 @@ public class NoWaitingCB extends ComponentDefinition {
                         }
                     }
                 }
-                if (!delivered.contains(crbData.getMsg()))
-                    trigger(new CRBDeliver(rbDeliver.getSource(), crbData.getMsg()), crb);
+                trigger(new CRBDeliver(rbDeliver.getSource(), crbData.getMsg()), crb);
                 delivered.add(crbData.getMsg());
                 Pair<KAddress, KompicsEvent> pair = new Pair<>(rbDeliver.getSource(), crbData.getMsg());
                 if (!past.contains(pair)) {

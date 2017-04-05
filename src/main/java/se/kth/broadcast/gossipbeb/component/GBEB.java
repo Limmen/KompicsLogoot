@@ -52,6 +52,7 @@ public class GBEB extends ComponentDefinition {
         public void handle(GBEBBroadcast gbebBroadcast) {
             LOG.debug("GBEBBroadcast receives by {}", selfAdr);
             past.add(new Pair<>(selfAdr, gbebBroadcast.getEvent()));
+            trigger(new GBEBDeliver(selfAdr, gbebBroadcast.getEvent()), gbeb);
         }
     };
 

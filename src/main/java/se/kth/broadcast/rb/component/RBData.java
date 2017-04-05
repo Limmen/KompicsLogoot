@@ -20,6 +20,14 @@ public class RBData implements KompicsEvent {
         return source;
     }
 
+    @Override
+    public String toString() {
+        return "RBData{" +
+                "source=" + source +
+                ", msg=" + msg +
+                '}';
+    }
+
     public KompicsEvent getMsg() {
         return msg;
     }

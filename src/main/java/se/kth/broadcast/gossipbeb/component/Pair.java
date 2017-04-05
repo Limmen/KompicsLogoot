@@ -27,4 +27,12 @@ public class Pair<T, T1> {
     public int hashCode() {
         return Objects.hashCode(p1, p2);
     }
+
+    @Override
+    public String toString() {
+        return "Pair{" +
+                "p1=" + p1 +
+                ", p2=" + p2 +
+                '}';
+    }
 }
