@@ -20,7 +20,7 @@ import java.util.HashSet;
 public class RBTest {
 
     private static final int NODES_NO_CORE = 10;
-    private static final int NODES_NO_EXTENSION = 3;
+    private static final int NODES_NO_EXTENSION = 10;
     private static final int BROADCASTS_NO = 10;
     private final static SimulationResultMap result = SimulationResultSingleton.getInstance();
 

@@ -48,8 +48,8 @@ public class RBTestScenarios {
                 startBootstrapServer.startAfterTerminationOf(1000, systemSetup);
                 startPeers.startAfterTerminationOf(1000, startBootstrapServer);
                 startChurnPeers.startAfterTerminationOf(1000, startPeers);
-                startObserver.startAfterTerminationOf(1000, startPeers);
-                terminateAfterTerminationOf(100000 * 100000, startPeers);
+                startObserver.startAfterTerminationOf(1000, startChurnPeers);
+                terminateAfterTerminationOf(100000 * 100000, startChurnPeers);
             }
         };
 
