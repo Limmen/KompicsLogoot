@@ -91,7 +91,7 @@ public class RBTestAppComp extends ComponentDefinition {
     protected final Handler<AppCompTimeout> handleTimeout = new Handler<AppCompTimeout>() {
         @Override
         public void handle(AppCompTimeout event) {
-            if(counter < broadcastMax) {
+            if (counter < broadcastMax) {
                 CRBBroadcast broadcast = new CRBBroadcast(new Pang());
                 trigger(broadcast, broadcastPort);
                 counter++;

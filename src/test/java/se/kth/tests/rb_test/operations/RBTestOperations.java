@@ -58,7 +58,7 @@ public class RBTestOperations {
 
     public static Operation3<StartNodeEvent, Integer, Integer, Integer> startObserverOp = new Operation3<StartNodeEvent, Integer, Integer, Integer>() {
         @Override
-        public StartNodeEvent generate(final Integer numberOfCoreNodes,final Integer numberOfExtensionNodes, final Integer broadcastCount) {
+        public StartNodeEvent generate(final Integer numberOfCoreNodes, final Integer numberOfExtensionNodes, final Integer broadcastCount) {
             return new StartNodeEvent() {
                 KAddress selfAdr;
 

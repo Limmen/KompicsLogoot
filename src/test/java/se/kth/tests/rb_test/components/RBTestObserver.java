@@ -15,7 +15,8 @@ import se.sics.kompics.timer.SchedulePeriodicTimeout;
 import se.sics.kompics.timer.Timeout;
 import se.sics.kompics.timer.Timer;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.UUID;
 
 /**
  * @author Maxime Dufour on 2017-04-06.
@@ -38,7 +39,7 @@ public class RBTestObserver extends ComponentDefinition {
         numberOfCoreNodes = init.numberOfCoreNodes;
         numberOfExtensionNodes = init.numberOfExtensionNodes;
         numberOfBroadcasts = init.numberOfBroadcasts;
-        nodesState = new int[numberOfCoreNodes+ numberOfExtensionNodes];
+        nodesState = new int[numberOfCoreNodes + numberOfExtensionNodes];
         subscribe(handleStart, control);
         subscribe(handleTimeout, timer);
     }

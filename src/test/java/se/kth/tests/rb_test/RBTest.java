@@ -12,7 +12,6 @@ import se.sics.kompics.simulator.run.LauncherComp;
 import java.util.HashSet;
 
 /**
- *
  * SimulationScenario to test correctness of the Reliable broadcast abstraction
  *
  * @author Maxime Dufour on 2017-04-06.
@@ -30,19 +29,18 @@ public class RBTest {
      * nodes deliver the message")
      */
     @Test
-    public void ReliableDeliveryTest(){
+    public void ReliableDeliveryTest() {
         SimulationScenario.setSeed(ScenarioSetup.scenarioSeed);
 
         SimulationScenario simpleBootScenario = RBTestScenarios.bebTest(NODES_NO_CORE, NODES_NO_EXTENSION, BROADCASTS_NO);
         simpleBootScenario.simulate(LauncherComp.class);
 
         HashSet reference = result.get(Integer.toString(0), HashSet.class);
-        for(int i = 0; i < NODES_NO_CORE + NODES_NO_EXTENSION; i++){
+        for (int i = 0; i < NODES_NO_CORE + NODES_NO_EXTENSION; i++) {
             HashSet nodestate = result.get(Integer.toString(i), HashSet.class);
             Assert.assertEquals(reference, nodestate); //Check that all nodes got the same set of delivered messages
         }
     }
-
 
 
 }
