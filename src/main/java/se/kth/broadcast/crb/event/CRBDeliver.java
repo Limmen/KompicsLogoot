@@ -25,4 +25,22 @@ public class CRBDeliver implements KompicsEvent, Serializable {
     public KompicsEvent getMsg() {
         return msg;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CRBDeliver that = (CRBDeliver) o;
+
+        if (!source.equals(that.source)) return false;
+        return msg.equals(that.msg);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = source.hashCode();
+        result = 31 * result + msg.hashCode();
+        return result;
+    }
 }

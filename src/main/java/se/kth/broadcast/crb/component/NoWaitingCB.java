@@ -43,7 +43,7 @@ public class NoWaitingCB extends ComponentDefinition {
         @Override
         public void handle(CRBBroadcast crbBroadcast) {
             KompicsEvent msg = crbBroadcast.getPayload();
-            LOG.info("CRBBroadcast received by {} {}", selfAdr, past);
+            LOG.debug("CRBBroadcast received by {} {}", selfAdr, past);
             trigger(new RBBroadcast(new CRBData(new LinkedList<>(past), msg)), rb);
             past.addLast(new Pair<>(selfAdr, msg));
         }
@@ -52,7 +52,7 @@ public class NoWaitingCB extends ComponentDefinition {
     ClassMatchedHandler<CRBData, RBDeliver> deliverHandler = new ClassMatchedHandler<CRBData, RBDeliver>() {
         @Override
         public void handle(CRBData crbData, RBDeliver rbDeliver) {
-            LOG.info("CRBData received by {} from {} {}", selfAdr, rbDeliver.getSource(), crbData);
+            LOG.debug("CRBData received by {} from {} {}", selfAdr, rbDeliver.getSource(), crbData);
             if (!delivered.contains(crbData.getMsg())) {
                 for (Pair<KAddress, KompicsEvent> pair : crbData.getPast()) {
                     if (!delivered.contains(pair.p2)) {
