@@ -26,7 +26,7 @@ public class EagerRB extends ComponentDefinition {
     private Negative<ReliableBroadcast> rb = provides(ReliableBroadcast.class);
     //**************************************************************************
 
-    private HashSet<RBData> delivered;
+    private HashSet<KompicsEvent> delivered;
     private KAddress selfAdr;
 
     public EagerRB(Init init) {
@@ -51,8 +51,7 @@ public class EagerRB extends ComponentDefinition {
         @Override
         public void handle(RBData rbData, GBEBDeliver gbebDeliver) {
             LOG.debug("GBEBDeliver received by {}", selfAdr);
-            if (!delivered.contains(rbData)) {
-                delivered.add(rbData);
+            if (delivered.add(rbData.getMsg())) {
                 LOG.debug("RBDeliver sent by {}", selfAdr);
                 trigger(new RBDeliver(rbData.getSource(), rbData.getMsg()), rb);
                 trigger(new GBEBBroadcast(rbData), gbeb);
