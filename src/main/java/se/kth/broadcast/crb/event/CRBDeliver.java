@@ -1,6 +1,7 @@
 package se.kth.broadcast.crb.event;
 
 import se.sics.kompics.KompicsEvent;
+import se.sics.kompics.PatternExtractor;
 import se.sics.ktoolbox.util.network.KAddress;
 
 import java.io.Serializable;
@@ -8,7 +9,7 @@ import java.io.Serializable;
 /**
  * Created by 62maxime on 04/04/2017.
  */
-public class CRBDeliver implements KompicsEvent, Serializable {
+public class CRBDeliver implements KompicsEvent, Serializable, PatternExtractor<Class, KompicsEvent> {
 
     private KAddress source;
     private KompicsEvent msg;
@@ -42,5 +43,15 @@ public class CRBDeliver implements KompicsEvent, Serializable {
         int result = source.hashCode();
         result = 31 * result + msg.hashCode();
         return result;
+    }
+
+    @Override
+    public Class extractPattern() {
+        return msg.getClass();
+    }
+
+    @Override
+    public KompicsEvent extractValue() {
+        return msg;
     }
 }

@@ -20,13 +20,13 @@ package se.kth.app;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.app.test.Pang;
+import se.kth.app.test.Patch;
+import se.kth.app.test.Redo;
+import se.kth.app.test.Undo;
 import se.kth.broadcast.crb.event.CRBBroadcast;
 import se.kth.broadcast.crb.event.CRBDeliver;
 import se.kth.broadcast.crb.port.CausalOrderReliableBroadcast;
-import se.sics.kompics.ComponentDefinition;
-import se.sics.kompics.Handler;
-import se.sics.kompics.Positive;
-import se.sics.kompics.Start;
+import se.sics.kompics.*;
 import se.sics.kompics.network.Network;
 import se.sics.kompics.timer.SchedulePeriodicTimeout;
 import se.sics.kompics.timer.Timeout;
@@ -62,7 +62,10 @@ public class AppComp extends ComponentDefinition {
         LOG.info("{}initiating...", logPrefix);
 
         subscribe(handleStart, control);
-        subscribe(handleBroadCast, broadcastPort);
+        subscribe(redoHandler, broadcastPort);
+        subscribe(undoHandler, broadcastPort);
+        subscribe(pangHandler, broadcastPort);
+        subscribe(patchHandler, broadcastPort);
         subscribe(handleCroupierSample, croupierPort);
         subscribe(handleTimeout, timerPort);
     }
@@ -93,12 +96,35 @@ public class AppComp extends ComponentDefinition {
         }
     };
 
-    Handler<CRBDeliver> handleBroadCast = new Handler<CRBDeliver>() {
+
+    ClassMatchedHandler<Redo, CRBDeliver> redoHandler = new ClassMatchedHandler<Redo, CRBDeliver>() {
         @Override
-        public void handle(CRBDeliver crbDeliver) {
-            LOG.info("{}received broadcast from:{}", logPrefix, crbDeliver.getSource());
+        public void handle(Redo redo, CRBDeliver crbDeliver) {
+
         }
     };
+
+    ClassMatchedHandler<Undo, CRBDeliver> undoHandler = new ClassMatchedHandler<Undo, CRBDeliver>() {
+        @Override
+        public void handle(Undo undo, CRBDeliver crbDeliver) {
+
+        }
+    };
+
+    ClassMatchedHandler<Patch, CRBDeliver> patchHandler = new ClassMatchedHandler<Patch, CRBDeliver>() {
+        @Override
+        public void handle(Patch patch, CRBDeliver crbDeliver) {
+
+        }
+    };
+
+    ClassMatchedHandler<Pang, CRBDeliver> pangHandler = new ClassMatchedHandler<Pang, CRBDeliver>() {
+        @Override
+        public void handle(Pang pang, CRBDeliver crbDeliver) {
+
+        }
+    };
+
 
     public static class Init extends se.sics.kompics.Init<AppComp> {
 
