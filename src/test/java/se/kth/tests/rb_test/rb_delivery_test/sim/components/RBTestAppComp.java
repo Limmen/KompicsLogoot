@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package se.kth.tests.rb_test.components;
+package se.kth.tests.rb_test.rb_delivery_test.sim.components;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,21 +23,20 @@ import se.kth.app.test.Pang;
 import se.kth.broadcast.crb.event.CRBBroadcast;
 import se.kth.broadcast.crb.event.CRBDeliver;
 import se.kth.broadcast.crb.port.CausalOrderReliableBroadcast;
+import se.kth.sim.common.result.SimulationResultMap;
+import se.kth.sim.common.result.SimulationResultSingleton;
 import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
 import se.sics.kompics.Positive;
 import se.sics.kompics.Start;
-import se.sics.kompics.network.Network;
-import se.sics.kompics.simulator.util.GlobalView;
 import se.sics.kompics.timer.SchedulePeriodicTimeout;
 import se.sics.kompics.timer.Timeout;
 import se.sics.kompics.timer.Timer;
-import se.sics.ktoolbox.croupier.CroupierPort;
-import se.sics.ktoolbox.croupier.event.CroupierSample;
 import se.sics.ktoolbox.util.identifiable.Identifier;
 import se.sics.ktoolbox.util.network.KAddress;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -50,16 +49,13 @@ public class RBTestAppComp extends ComponentDefinition {
 
     //*******************************CONNECTIONS********************************
     Positive<Timer> timerPort = requires(Timer.class);
-    Positive<Network> networkPort = requires(Network.class);
-    Positive<CroupierPort> croupierPort = requires(CroupierPort.class);
     Positive<CausalOrderReliableBroadcast> broadcastPort = requires(CausalOrderReliableBroadcast.class);
     //**************************************************************************
     private KAddress selfAdr;
     private UUID timeoutId;
     private final long delay = config().getValue("app.delay", Long.class);
-    private int counter = 0;
-    private int broadcastMax;
-
+    private final boolean coreNode = config().getValue("sim.coreNode", Boolean.class);
+    private final static SimulationResultMap result = SimulationResultSingleton.getInstance();
 
     public RBTestAppComp(Init init) {
         selfAdr = init.selfAdr;
@@ -68,16 +64,13 @@ public class RBTestAppComp extends ComponentDefinition {
 
         subscribe(handleStart, control);
         subscribe(handleBroadCast, broadcastPort);
-        subscribe(handleCroupierSample, croupierPort);
         subscribe(handleTimeout, timerPort);
 
-        broadcastMax = init.broadcastCount;
-        GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
-        HashSet<CRBDeliver> delivered = new HashSet<>();
-        gv.setValue(selfAdr.getId().toString(), delivered);
+        Set<CRBDeliver> delivered = new HashSet<>();
+        result.put(selfAdr.getId().toString(), delivered);
     }
 
-    Handler handleStart = new Handler<Start>() {
+    protected Handler handleStart = new Handler<Start>() {
         @Override
         public void handle(Start event) {
             LOG.info("{}starting...", logPrefix);
@@ -91,27 +84,19 @@ public class RBTestAppComp extends ComponentDefinition {
     protected final Handler<AppCompTimeout> handleTimeout = new Handler<AppCompTimeout>() {
         @Override
         public void handle(AppCompTimeout event) {
-            if (counter < broadcastMax) {
+            if (!coreNode) {
                 CRBBroadcast broadcast = new CRBBroadcast(new Pang());
                 trigger(broadcast, broadcastPort);
-                counter++;
             }
         }
     };
 
-    Handler handleCroupierSample = new Handler<CroupierSample>() {
-        @Override
-        public void handle(CroupierSample croupierSample) {
-        }
-    };
-
-    Handler<CRBDeliver> handleBroadCast = new Handler<CRBDeliver>() {
+    protected  Handler<CRBDeliver> handleBroadCast = new Handler<CRBDeliver>() {
         @Override
         public void handle(CRBDeliver crbDeliver) {
-            GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
-            HashSet<CRBDeliver> delivered = gv.getValue(selfAdr.getId().toString(), HashSet.class);
+            Set<CRBDeliver> delivered = result.get(selfAdr.getId().toString(), Set.class);
             delivered.add(crbDeliver);
-            gv.setValue(selfAdr.getId().toString(), delivered);
+            result.put(selfAdr.getId().toString(), delivered);
         }
     };
 
@@ -119,12 +104,10 @@ public class RBTestAppComp extends ComponentDefinition {
 
         public final KAddress selfAdr;
         public final Identifier gradientOId;
-        public final int broadcastCount;
 
-        public Init(KAddress selfAdr, Identifier gradientOId, int broadcastCount) {
+        public Init(KAddress selfAdr, Identifier gradientOId) {
             this.selfAdr = selfAdr;
             this.gradientOId = gradientOId;
-            this.broadcastCount = broadcastCount;
         }
     }
 

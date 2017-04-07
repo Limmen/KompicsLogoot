@@ -34,8 +34,8 @@ public class BEBTest {
          * all nodes should deliver exactly this amount of messages, this follows from the No duplication and no creation properties
          * and that all nodes are correct.
          */
-        SimulationScenario simpleBootScenario = BEBTestScenarios.bebTest(NODES_NO, BROADCASTS_NO);
-        simpleBootScenario.simulate(LauncherComp.class);
+        SimulationScenario bebTestScenario = BEBTestScenarios.bebTest(NODES_NO, BROADCASTS_NO);
+        bebTestScenario.simulate(LauncherComp.class);
 
         Map<Integer, String> reference = result.get(Integer.toString(0), Map.class);
         for(int i = 0; i < NODES_NO; i++){

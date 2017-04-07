@@ -15,14 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package se.kth.tests.rb_test.components;
+package se.kth.tests.rb_test.rb_delivery_test.sim.components;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.sics.kompics.*;
 import se.sics.kompics.network.Network;
-import se.sics.kompics.timer.SchedulePeriodicTimeout;
-import se.sics.kompics.timer.Timeout;
 import se.sics.kompics.timer.Timer;
 import se.sics.ktoolbox.cc.heartbeat.CCHeartbeatPort;
 import se.sics.ktoolbox.croupier.CroupierPort;
@@ -53,14 +51,9 @@ public class RBTestHostMngrComp extends ComponentDefinition {
     private Component bootstrapClientComp;
     private Component overlayMngrComp;
     private Component appMngrComp;
-    //***************************SIMULATION_STATE*********************************
-    private int broadcastCount;
-    private int delay = 8000;
-    private boolean dead = false;
 
     public RBTestHostMngrComp(Init init) {
         selfAdr = init.selfAdr;
-        broadcastCount = init.broadcastCount;
         logPrefix = "<nid:" + selfAdr.getId() + ">";
         LOG.info("{}initiating...", logPrefix);
 
@@ -82,13 +75,6 @@ public class RBTestHostMngrComp extends ComponentDefinition {
             trigger(Start.event, overlayMngrComp.control());
             trigger(Start.event, appMngrComp.control());
 
-            Boolean churn = config().getValue("system.churn", Boolean.class);
-            if (churn) {
-                SchedulePeriodicTimeout spt = new SchedulePeriodicTimeout(delay, delay);
-                spt.setTimeoutEvent(new HostTimeout(spt));
-                trigger(spt, timerPort);
-                subscribe(timeoutHandler, timerPort);
-            }
         }
     };
 
@@ -105,52 +91,22 @@ public class RBTestHostMngrComp extends ComponentDefinition {
     }
 
     private void connectApp() {
-        RBTestAppMngrComp.ExtPort extPorts = new RBTestAppMngrComp.ExtPort(timerPort, networkPort, overlayMngrComp.getPositive(CroupierPort.class), overlayMngrComp.getNegative(OverlayViewUpdatePort.class));
-        appMngrComp = create(RBTestAppMngrComp.class, new RBTestAppMngrComp.Init(extPorts, selfAdr, croupierId, broadcastCount));
+        RBTestAppMngrComp.ExtPort extPorts = new RBTestAppMngrComp.ExtPort(timerPort, networkPort,
+                overlayMngrComp.getPositive(CroupierPort.class), overlayMngrComp.getNegative(OverlayViewUpdatePort.class));
+        appMngrComp = create(RBTestAppMngrComp.class, new RBTestAppMngrComp.Init(extPorts, selfAdr, croupierId));
         connect(appMngrComp.getNegative(OverlayMngrPort.class), overlayMngrComp.getPositive(OverlayMngrPort.class), Channel.TWO_WAY);
     }
-
-    Handler<HostTimeout> timeoutHandler = new Handler<HostTimeout>() {
-        @Override
-        public void handle(HostTimeout hostTimeout) {
-            if (dead) {
-                LOG.info("{}starting...", logPrefix);
-                connectBootstrapClient();
-                connectOverlayMngr();
-                connectApp();
-
-                trigger(Start.event, bootstrapClientComp.control());
-                trigger(Start.event, overlayMngrComp.control());
-                trigger(Start.event, appMngrComp.control());
-            } else {
-                destroy(bootstrapClientComp);
-                destroy(overlayMngrComp);
-                destroy(appMngrComp);
-            }
-            dead = !dead;
-        }
-    };
 
     public static class Init extends se.sics.kompics.Init<RBTestHostMngrComp> {
 
         public final KAddress selfAdr;
         public final KAddress bootstrapServer;
         public final OverlayId croupierId;
-        public final int broadcastCount;
 
-        public Init(KAddress selfAdr, KAddress bootstrapServer, OverlayId croupierId, int broadcastCount) {
+        public Init(KAddress selfAdr, KAddress bootstrapServer, OverlayId croupierId) {
             this.selfAdr = selfAdr;
             this.bootstrapServer = bootstrapServer;
             this.croupierId = croupierId;
-            this.broadcastCount = broadcastCount;
-        }
-    }
-
-
-    public class HostTimeout extends Timeout {
-
-        public HostTimeout(SchedulePeriodicTimeout request) {
-            super(request);
         }
     }
 }

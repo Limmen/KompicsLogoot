@@ -1,8 +1,8 @@
-package se.kth.tests.rb_test.operations;
+package se.kth.tests.rb_test.basic_churn_test.sim.operations;
 
 import se.kth.sim.common.util.ScenarioSetup;
-import se.kth.tests.rb_test.components.RBTestHostMngrComp;
-import se.kth.tests.rb_test.components.RBTestObserver;
+import se.kth.tests.rb_test.basic_churn_test.sim.components.RBTestHostMngrComp;
+import se.kth.tests.rb_test.basic_churn_test.sim.components.RBTestObserver;
 import se.sics.kompics.network.Address;
 import se.sics.kompics.simulator.adaptor.Operation3;
 import se.sics.kompics.simulator.events.system.StartNodeEvent;

@@ -15,32 +15,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package se.kth.app;
+package se.kth.tests.rb_test.basic_churn_test.sim.components;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.app.test.Pang;
-import se.kth.app.test.Patch;
-import se.kth.app.test.Redo;
-import se.kth.app.test.Undo;
 import se.kth.broadcast.crb.event.CRBBroadcast;
 import se.kth.broadcast.crb.event.CRBDeliver;
 import se.kth.broadcast.crb.port.CausalOrderReliableBroadcast;
-import se.sics.kompics.*;
+import se.sics.kompics.ComponentDefinition;
+import se.sics.kompics.Handler;
+import se.sics.kompics.Positive;
+import se.sics.kompics.Start;
+import se.sics.kompics.simulator.util.GlobalView;
 import se.sics.kompics.timer.SchedulePeriodicTimeout;
 import se.sics.kompics.timer.Timeout;
 import se.sics.kompics.timer.Timer;
 import se.sics.ktoolbox.util.identifiable.Identifier;
 import se.sics.ktoolbox.util.network.KAddress;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 /**
  * @author Alex Ormenisan <aaor@kth.se>
  */
-public class AppComp extends ComponentDefinition {
+public class RBTestAppComp extends ComponentDefinition {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AppComp.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RBTestAppComp.class);
     private String logPrefix = " ";
 
     //*******************************CONNECTIONS********************************
@@ -50,18 +52,23 @@ public class AppComp extends ComponentDefinition {
     private KAddress selfAdr;
     private UUID timeoutId;
     private final long delay = config().getValue("app.delay", Long.class);
+    private int counter = 0;
+    private int broadcastMax;
 
-    public AppComp(Init init) {
+
+    public RBTestAppComp(Init init) {
         selfAdr = init.selfAdr;
         logPrefix = "<nid:" + selfAdr.getId() + ">";
         LOG.info("{}initiating...", logPrefix);
 
         subscribe(handleStart, control);
-        subscribe(redoHandler, broadcastPort);
-        subscribe(undoHandler, broadcastPort);
-        subscribe(pangHandler, broadcastPort);
-        subscribe(patchHandler, broadcastPort);
+        subscribe(handleBroadCast, broadcastPort);
         subscribe(handleTimeout, timerPort);
+
+        broadcastMax = init.broadcastCount;
+        GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
+        HashSet<CRBDeliver> delivered = new HashSet<>();
+        gv.setValue(selfAdr.getId().toString(), delivered);
     }
 
     protected Handler handleStart = new Handler<Start>() {
@@ -78,48 +85,34 @@ public class AppComp extends ComponentDefinition {
     protected final Handler<AppCompTimeout> handleTimeout = new Handler<AppCompTimeout>() {
         @Override
         public void handle(AppCompTimeout event) {
-            LOG.info("Timeout, triggering broadcast");
-            CRBBroadcast broadcast = new CRBBroadcast(new Pang());
-            trigger(broadcast, broadcastPort);
+            if (counter < broadcastMax) {
+                CRBBroadcast broadcast = new CRBBroadcast(new Pang());
+                trigger(broadcast, broadcastPort);
+                counter++;
+            }
         }
     };
 
-    protected  ClassMatchedHandler<Redo, CRBDeliver> redoHandler = new ClassMatchedHandler<Redo, CRBDeliver>() {
+    protected Handler<CRBDeliver> handleBroadCast = new Handler<CRBDeliver>() {
         @Override
-        public void handle(Redo redo, CRBDeliver crbDeliver) {
-
+        public void handle(CRBDeliver crbDeliver) {
+            GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
+            HashSet<CRBDeliver> delivered = gv.getValue(selfAdr.getId().toString(), HashSet.class);
+            delivered.add(crbDeliver);
+            gv.setValue(selfAdr.getId().toString(), delivered);
         }
     };
 
-    protected  ClassMatchedHandler<Undo, CRBDeliver> undoHandler = new ClassMatchedHandler<Undo, CRBDeliver>() {
-        @Override
-        public void handle(Undo undo, CRBDeliver crbDeliver) {
-
-        }
-    };
-
-    protected ClassMatchedHandler<Patch, CRBDeliver> patchHandler = new ClassMatchedHandler<Patch, CRBDeliver>() {
-        @Override
-        public void handle(Patch patch, CRBDeliver crbDeliver) {
-
-        }
-    };
-
-    protected ClassMatchedHandler<Pang, CRBDeliver> pangHandler = new ClassMatchedHandler<Pang, CRBDeliver>() {
-        @Override
-        public void handle(Pang pang, CRBDeliver crbDeliver) {
-
-        }
-    };
-
-    public static class Init extends se.sics.kompics.Init<AppComp> {
+    public static class Init extends se.sics.kompics.Init<RBTestAppComp> {
 
         public final KAddress selfAdr;
         public final Identifier gradientOId;
+        public final int broadcastCount;
 
-        public Init(KAddress selfAdr, Identifier gradientOId) {
+        public Init(KAddress selfAdr, Identifier gradientOId, int broadcastCount) {
             this.selfAdr = selfAdr;
             this.gradientOId = gradientOId;
+            this.broadcastCount = broadcastCount;
         }
     }
 

@@ -1,4 +1,4 @@
-package se.kth.tests.rb_test.components;
+package se.kth.tests.rb_test.basic_churn_test.sim.components;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,11 +1,14 @@
 package se.kth.sim.common.operations;
 
-import se.kth.system.HostMngrComp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.kth.sim.common.util.ScenarioSetup;
 import se.kth.sim.common.util.SimNodeIdExtractor;
+import se.kth.system.HostMngrComp;
 import se.sics.kompics.network.Address;
 import se.sics.kompics.simulator.adaptor.Operation;
 import se.sics.kompics.simulator.adaptor.Operation1;
+import se.sics.kompics.simulator.events.system.KillNodeEvent;
 import se.sics.kompics.simulator.events.system.SetupEvent;
 import se.sics.kompics.simulator.events.system.StartNodeEvent;
 import se.sics.kompics.simulator.network.identifier.IdentifierExtractor;
@@ -19,6 +22,8 @@ import java.util.Map;
  * @author Kim Hammar on 2017-04-04.
  */
 public class CommonOperations {
+    private static final Logger LOG = LoggerFactory.getLogger(CommonOperations.class);
+
     public static Operation<SetupEvent> systemSetupOp = new Operation<SetupEvent>() {
         @Override
         public SetupEvent generate() {
@@ -98,4 +103,30 @@ public class CommonOperations {
             };
         }
     };
+
+    public static Operation1 killNodeOp = new Operation1<KillNodeEvent, Integer>() {
+        @Override
+        public KillNodeEvent generate(final Integer self) {
+            return new KillNodeEvent() {
+                KAddress selfAdr;
+
+                {
+                    String nodeIp = "193.0.0." + self;
+                    selfAdr = ScenarioSetup.getNodeAdr(nodeIp, self);
+                    LOG.info("Killing node: " + selfAdr);
+                }
+
+                @Override
+                public Address getNodeAddress() {
+                    return selfAdr;
+                }
+
+                @Override
+                public String toString() {
+                    return "KillNode<" + selfAdr.toString() + ">";
+                }
+            };
+        }
+    };
+
 }

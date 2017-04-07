@@ -15,11 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package se.kth.app.mngr;
+package se.kth.tests.rb_test.basic_churn_test.sim.components;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.kth.app.AppComp;
 import se.kth.broadcast.mngr.BroadCastMngrComp;
 import se.kth.croupier.util.NoView;
 import se.sics.kompics.*;
@@ -36,9 +35,9 @@ import se.sics.ktoolbox.util.overlays.view.OverlayViewUpdatePort;
 /**
  * @author Alex Ormenisan <aaor@kth.se>
  */
-public class AppMngrComp extends ComponentDefinition {
+public class RBTestAppMngrComp extends ComponentDefinition {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AppMngrComp.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RBTestAppMngrComp.class);
     private String logPrefix = "";
     //*****************************CONNECTIONS**********************************
     Positive<OverlayMngrPort> omngrPort = requires(OverlayMngrPort.class);
@@ -51,10 +50,13 @@ public class AppMngrComp extends ComponentDefinition {
     private Component broadcastMngrComp;
     //******************************AUX_STATE***********************************
     private OMngrCroupier.ConnectRequest pendingCroupierConnReq;
+    //******************************SIMULATION_STATE***********************************
+    private int broadcastCount;
     //**************************************************************************
 
-    public AppMngrComp(Init init) {
+    public RBTestAppMngrComp(Init init) {
         selfAdr = init.selfAdr;
+        broadcastCount = init.broadcastCount;
         logPrefix = "<nid:" + selfAdr.getId() + ">";
         LOG.info("{}initiating...", logPrefix);
 
@@ -79,7 +81,7 @@ public class AppMngrComp extends ComponentDefinition {
         @Override
         public void handle(OMngrCroupier.ConnectResponse event) {
             LOG.info("{}overlays connected", logPrefix);
-            connectAppComp();
+            connectAppCompSimp();
             trigger(Start.event, appComp.control());
             connectBroadcast();
             trigger(Start.event, broadcastMngrComp.control());
@@ -87,8 +89,8 @@ public class AppMngrComp extends ComponentDefinition {
         }
     };
 
-    private void connectAppComp() {
-        appComp = create(AppComp.class, new AppComp.Init(selfAdr, croupierId));
+    private void connectAppCompSimp() {
+        appComp = create(RBTestAppComp.class, new RBTestAppComp.Init(selfAdr, croupierId, broadcastCount));
         connect(appComp.getNegative(Timer.class), extPorts.timerPort, Channel.TWO_WAY);
     }
 
@@ -97,16 +99,18 @@ public class AppMngrComp extends ComponentDefinition {
         broadcastMngrComp = create(BroadCastMngrComp.class, new BroadCastMngrComp.Init(bcExtPorts, selfAdr, appComp));
     }
 
-    public static class Init extends se.sics.kompics.Init<AppMngrComp> {
+    public static class Init extends se.sics.kompics.Init<RBTestAppMngrComp> {
 
         public final ExtPort extPorts;
         public final KAddress selfAdr;
         public final OverlayId croupierOId;
+        public final int broadcastCount;
 
-        public Init(ExtPort extPorts, KAddress selfAdr, OverlayId croupierOId) {
+        public Init(ExtPort extPorts, KAddress selfAdr, OverlayId croupierOId, int broadcastCount) {
             this.extPorts = extPorts;
             this.selfAdr = selfAdr;
             this.croupierOId = croupierOId;
+            this.broadcastCount = broadcastCount;
         }
     }
 

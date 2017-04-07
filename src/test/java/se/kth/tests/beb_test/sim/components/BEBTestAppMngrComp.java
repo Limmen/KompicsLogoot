@@ -92,8 +92,6 @@ public class BEBTestAppMngrComp extends ComponentDefinition {
     private void connectAppCompSimp() {
         appComp = create(BEBTestAppComp.class, new BEBTestAppComp.Init(selfAdr, croupierId, broadcastCount));
         connect(appComp.getNegative(Timer.class), extPorts.timerPort, Channel.TWO_WAY);
-        connect(appComp.getNegative(Network.class), extPorts.networkPort, Channel.TWO_WAY);
-        connect(appComp.getNegative(CroupierPort.class), extPorts.croupierPort, Channel.TWO_WAY);
     }
 
     private void connectBroadcast() {

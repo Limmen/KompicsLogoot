@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package se.kth.tests.rb_test.components;
+package se.kth.tests.rb_test.rb_delivery_test.sim.components;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,13 +50,10 @@ public class RBTestAppMngrComp extends ComponentDefinition {
     private Component broadcastMngrComp;
     //******************************AUX_STATE***********************************
     private OMngrCroupier.ConnectRequest pendingCroupierConnReq;
-    //******************************SIMULATION_STATE***********************************
-    private int broadcastCount;
     //**************************************************************************
 
     public RBTestAppMngrComp(Init init) {
         selfAdr = init.selfAdr;
-        broadcastCount = init.broadcastCount;
         logPrefix = "<nid:" + selfAdr.getId() + ">";
         LOG.info("{}initiating...", logPrefix);
 
@@ -81,7 +78,7 @@ public class RBTestAppMngrComp extends ComponentDefinition {
         @Override
         public void handle(OMngrCroupier.ConnectResponse event) {
             LOG.info("{}overlays connected", logPrefix);
-            connectAppCompSimp();
+            connectAppComp();
             trigger(Start.event, appComp.control());
             connectBroadcast();
             trigger(Start.event, broadcastMngrComp.control());
@@ -89,11 +86,9 @@ public class RBTestAppMngrComp extends ComponentDefinition {
         }
     };
 
-    private void connectAppCompSimp() {
-        appComp = create(RBTestAppComp.class, new RBTestAppComp.Init(selfAdr, croupierId, broadcastCount));
+    private void connectAppComp() {
+        appComp = create(RBTestAppComp.class, new RBTestAppComp.Init(selfAdr, croupierId));
         connect(appComp.getNegative(Timer.class), extPorts.timerPort, Channel.TWO_WAY);
-        connect(appComp.getNegative(Network.class), extPorts.networkPort, Channel.TWO_WAY);
-        connect(appComp.getNegative(CroupierPort.class), extPorts.croupierPort, Channel.TWO_WAY);
     }
 
     private void connectBroadcast() {
@@ -106,13 +101,11 @@ public class RBTestAppMngrComp extends ComponentDefinition {
         public final ExtPort extPorts;
         public final KAddress selfAdr;
         public final OverlayId croupierOId;
-        public final int broadcastCount;
 
-        public Init(ExtPort extPorts, KAddress selfAdr, OverlayId croupierOId, int broadcastCount) {
+        public Init(ExtPort extPorts, KAddress selfAdr, OverlayId croupierOId) {
             this.extPorts = extPorts;
             this.selfAdr = selfAdr;
             this.croupierOId = croupierOId;
-            this.broadcastCount = broadcastCount;
         }
     }
 

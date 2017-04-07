@@ -1,7 +1,7 @@
-package se.kth.tests.rb_test.scenarios;
+package se.kth.tests.rb_test.basic_churn_test.sim.scenarios;
 
 import se.kth.sim.common.operations.CommonOperations;
-import se.kth.tests.rb_test.operations.RBTestOperations;
+import se.kth.tests.rb_test.basic_churn_test.sim.operations.RBTestOperations;
 import se.sics.kompics.simulator.SimulationScenario;
 import se.sics.kompics.simulator.adaptor.distributions.ConstantDistribution;
 import se.sics.kompics.simulator.adaptor.distributions.extra.BasicIntSequentialDistribution;
@@ -10,7 +10,8 @@ import se.sics.kompics.simulator.adaptor.distributions.extra.BasicIntSequentialD
  * @author Maxime Dufour on 2017-04-06.
  */
 public class RBTestScenarios {
-    public static SimulationScenario bebTest(final int numberOfCoreNodes, final int numberOfExtensionNodes, final int numberOfBroadcasts) {
+
+    public static SimulationScenario rbFailRecoverTest(final int numberOfCoreNodes, final int numberOfExtensionNodes, final int numberOfBroadcasts) {
         SimulationScenario scen = new SimulationScenario() {
             {
                 StochasticProcess systemSetup = new StochasticProcess() {
@@ -52,7 +53,6 @@ public class RBTestScenarios {
                 terminateAfterTerminationOf(100000 * 100000, startChurnPeers);
             }
         };
-
         return scen;
     }
 }

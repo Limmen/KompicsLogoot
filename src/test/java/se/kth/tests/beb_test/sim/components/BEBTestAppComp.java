@@ -27,12 +27,10 @@ import se.sics.kompics.ComponentDefinition;
 import se.sics.kompics.Handler;
 import se.sics.kompics.Positive;
 import se.sics.kompics.Start;
-import se.sics.kompics.network.Network;
 import se.sics.kompics.simulator.util.GlobalView;
 import se.sics.kompics.timer.SchedulePeriodicTimeout;
 import se.sics.kompics.timer.Timeout;
 import se.sics.kompics.timer.Timer;
-import se.sics.ktoolbox.croupier.CroupierPort;
 import se.sics.ktoolbox.croupier.event.CroupierSample;
 import se.sics.ktoolbox.util.identifiable.Identifier;
 import se.sics.ktoolbox.util.network.KAddress;
@@ -50,8 +48,6 @@ public class BEBTestAppComp extends ComponentDefinition {
 
     //*******************************CONNECTIONS********************************
     Positive<Timer> timerPort = requires(Timer.class);
-    Positive<Network> networkPort = requires(Network.class);
-    Positive<CroupierPort> croupierPort = requires(CroupierPort.class);
     Positive<CausalOrderReliableBroadcast> broadcastPort = requires(CausalOrderReliableBroadcast.class);
     //**************************************************************************
     private KAddress selfAdr;
@@ -68,7 +64,6 @@ public class BEBTestAppComp extends ComponentDefinition {
 
         subscribe(handleStart, control);
         subscribe(handleBroadCast, broadcastPort);
-        subscribe(handleCroupierSample, croupierPort);
         subscribe(handleTimeout, timerPort);
 
         broadcastMax = init.broadcastCount;
