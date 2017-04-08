@@ -47,7 +47,7 @@ public class DocumentTest {
      * Test generation of N lineIds between p and q
      */
     @Test
-    public void generateLineId() {
+    public void generateLineIdTest() {
         int n = 7;
         int boundary = 10;
         List<LineId> list = document.generateLineId(p, q, n, boundary);

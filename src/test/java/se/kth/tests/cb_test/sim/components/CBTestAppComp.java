@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package se.kth.tests.cb_test.sim.sim.components;
+package se.kth.tests.cb_test.sim.components;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,6 @@ import se.sics.ktoolbox.util.network.KAddress;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -103,7 +102,7 @@ public class CBTestAppComp extends ComponentDefinition {
         public void handle(CRBDeliver crbDeliver) {
             GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
             Pang pang = (Pang) crbDeliver.getMsg();
-            ts = Integer.max(pang.ts, ts) + 1;
+            ts = Math.max(pang.ts, ts) + 1;
             List<Integer> delivered = gv.getValue(selfAdr.getId().toString(), List.class);
             delivered.add(ts);
             gv.setValue(selfAdr.getId().toString(), delivered);

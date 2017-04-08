@@ -1,4 +1,4 @@
-package se.kth.tests.cb_test.sim;
+package se.kth.tests.cb_test;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -10,7 +10,7 @@ import se.sics.kompics.simulator.run.LauncherComp;
 
 import java.util.List;
 
-import static se.kth.tests.cb_test.sim.sim.scenarios.CBTestScenarios.causalOrderScenario;
+import static se.kth.tests.cb_test.sim.scenarios.CBTestScenarios.causalOrderScenario;
 
 /**
  * @author Maxime Dufour on 2017-04-08.

@@ -1,9 +1,7 @@
-package se.kth.tests.cb_test.sim.sim.components;
+package se.kth.tests.cb_test.sim.components;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.kth.app.test.Pang;
-import se.kth.broadcast.crb.event.CRBDeliver;
 import se.kth.sim.common.result.SimulationResultMap;
 import se.kth.sim.common.result.SimulationResultSingleton;
 import se.sics.kompics.ComponentDefinition;

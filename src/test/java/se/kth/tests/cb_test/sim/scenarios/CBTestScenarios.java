@@ -1,7 +1,7 @@
-package se.kth.tests.cb_test.sim.sim.scenarios;
+package se.kth.tests.cb_test.sim.scenarios;
 
 import se.kth.sim.common.operations.CommonOperations;
-import se.kth.tests.cb_test.sim.sim.operations.CBTestOperations;
+import se.kth.tests.cb_test.sim.operations.CBTestOperations;
 import se.sics.kompics.simulator.SimulationScenario;
 import se.sics.kompics.simulator.adaptor.distributions.ConstantDistribution;
 import se.sics.kompics.simulator.adaptor.distributions.extra.BasicIntSequentialDistribution;

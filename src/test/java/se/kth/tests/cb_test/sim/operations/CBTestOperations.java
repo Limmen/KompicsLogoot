@@ -1,11 +1,10 @@
-package se.kth.tests.cb_test.sim.sim.operations;
+package se.kth.tests.cb_test.sim.operations;
 
 import se.kth.sim.common.util.ScenarioSetup;
-import se.kth.tests.cb_test.sim.sim.components.CBTestHostMngrComp;
-import se.kth.tests.cb_test.sim.sim.components.CBTestObserver;
+import se.kth.tests.cb_test.sim.components.CBTestHostMngrComp;
+import se.kth.tests.cb_test.sim.components.CBTestObserver;
 import se.sics.kompics.network.Address;
 import se.sics.kompics.simulator.adaptor.Operation2;
-import se.sics.kompics.simulator.adaptor.Operation3;
 import se.sics.kompics.simulator.events.system.StartNodeEvent;
 import se.sics.ktoolbox.util.network.KAddress;
 
