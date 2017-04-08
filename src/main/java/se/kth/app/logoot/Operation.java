@@ -7,7 +7,7 @@ public interface Operation {
 
     OperationType getOperationType();
 
-    Id getId();
+    Position getId();
 
     String getContent();
 }

@@ -7,10 +7,10 @@ import java.io.Serializable;
  */
 public class Insert implements Operation, Serializable {
 
-    private Id id;
+    private Position id;
     private String content;
 
-    public Insert(Id id, String content) {
+    public Insert(Position id, String content) {
         this.id = id;
         this.content = content;
     }
@@ -29,7 +29,7 @@ public class Insert implements Operation, Serializable {
     }
 
     @Override
-    public Id getId() {
+    public Position getId() {
         return null;
     }
 

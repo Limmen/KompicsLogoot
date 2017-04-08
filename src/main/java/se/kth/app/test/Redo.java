@@ -1,6 +1,6 @@
 package se.kth.app.test;
 
-import se.kth.app.logoot.Id;
+import se.kth.app.logoot.Position;
 import se.sics.kompics.KompicsEvent;
 
 import java.io.Serializable;
@@ -10,13 +10,13 @@ import java.io.Serializable;
  */
 public class Redo implements KompicsEvent, Serializable {
 
-    private Id patchId;
+    private Position patchId;
 
-    public Redo(Id patchId) {
+    public Redo(Position patchId) {
         this.patchId = patchId;
     }
 
-    public Id getPatchId() {
+    public Position getPatchId() {
         return patchId;
     }
 
