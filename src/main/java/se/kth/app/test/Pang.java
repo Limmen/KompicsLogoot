@@ -11,6 +11,16 @@ import java.util.UUID;
  */
 public class Pang implements KompicsEvent, Serializable {
     public UUID id = UUID.randomUUID();
+    public int ts;
+
+
+    public Pang() {
+    }
+
+    public Pang(UUID id, int ts) {
+        this.id = id;
+        this.ts = ts;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -29,6 +39,7 @@ public class Pang implements KompicsEvent, Serializable {
     public String toString() {
         return "Pang{" +
                 "id=" + id +
+                ", ts:" + ts +
                 '}';
     }
 }
