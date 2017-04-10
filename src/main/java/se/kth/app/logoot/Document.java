@@ -1,14 +1,14 @@
 package se.kth.app.logoot;
 
 import com.google.common.collect.Lists;
+import se.kth.app.events.Patch;
 import se.sics.ktoolbox.util.identifiable.Identifier;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
+ * Logoot-undo document
+ *
  * @author Maxime Dufour on 2017-04-07.
  */
 public class Document {
@@ -18,9 +18,15 @@ public class Document {
     private Random random = new Random();
     private ArrayList<String> documentLines;
     private ArrayList<LineId> idTable;
-    private HashMap<Position, Operation> hb;
-    private HashMap<Position, Integer> cemetery;
+    private HashMap<LineId, Operation> hb;
+    private HashMap<LineId, Integer> cemetery;
 
+    /**
+     * Class constructor. Initializes document for the given site by creating two identifiers, one marking the beginning of document
+     * and one marking the end of the document.
+     *
+     * @param site
+     */
     public Document(Identifier site) {
         this.site = site;
         documentLines = new ArrayList<>();
@@ -32,16 +38,45 @@ public class Document {
     }
 
 
-    void execute(List<Operation> patch) {
+    /**
+     * Execute a patch of operations
+     *
+     * @param patch - list of operations from a single peer
+     */
+    public void execute(Patch patch) {
+        for (Operation op : patch.getOps()) {
+            int position;
+            switch (op.getOperationType()) {
+                case INSERT:
+                    if (!idTable.contains(op.getId())) {
+                        idTable.add(op.getId());
+                        Collections.sort(idTable);
+                        position = Collections.binarySearch((List) idTable, op.getId());
+                        if (position > documentLines.size())
+                            documentLines.add(op.getContent());
+                        else
+                            documentLines.add(position - 1, op.getContent());
+                    }
+                    break;
+                case DELETE:
+                    position = Collections.binarySearch((List) idTable, op.getId());
+                    if (idTable.get(position).equals(op.getId())) {
+                        documentLines.remove(position-1);
+                        idTable.remove(position);
+                    }
+                    break;
+            }
+        }
 
     }
 
     /**
      * Generates N lineIds between LineId p and LineId q with boundary limiting the distance between two successive
      * Id's
-     * @param p lineId p
-     * @param q lineId q
-     * @param N Number of lines to generate
+     *
+     * @param p        lineId p
+     * @param q        lineId q
+     * @param N        Number of lines to generate
      * @param boundary boundary between successive lines
      * @return
      */
@@ -65,6 +100,7 @@ public class Document {
     /**
      * Returns a number in base Integer.MAX_VALUE where the digits of this number are the ith first position digits
      * of lineId p (filled with 0 if |p| < i).
+     *
      * @param p lineId
      * @param i number of digits
      * @return prefix number
@@ -81,11 +117,12 @@ public class Document {
         if (num < Integer.MAX_VALUE - 1)
             return num;
         else
-            return Integer.MAX_VALUE-2;
+            return Integer.MAX_VALUE - 2;
     }
 
     /**
      * Constructs a lineId inbetween lineId p and lineId q with the digits in r
+     *
      * @param r
      * @param p
      * @param q
@@ -93,9 +130,9 @@ public class Document {
      */
     private LineId construct(int r, LineId p, LineId q) {
         ArrayList<Position> positions = new ArrayList<>();
-        String rDigits = Integer.toString(r);
-        for (int i = 0; i < rDigits.length(); i++) {
-            int d = Character.getNumericValue(rDigits.charAt(i));
+        ArrayList<Integer> digits = getDigits(r, p, q);
+        for (int i = 0; i < digits.size(); i++) {
+            int d = digits.get(i);
             Identifier s;
             int c;
             if (i < p.getPositions().size() && d == p.getPositions().get(i).getDigit()) {
@@ -113,11 +150,85 @@ public class Document {
         return new LineId(positions);
     }
 
+    /**
+     * Helper function that splits r (integer) into list of digits.
+     * Pre condition is that r is a number that can be split into digits to create a lineId between p and q.
+     *
+     * @param r
+     * @param p
+     * @param q
+     * @return
+     */
+    private ArrayList<Integer> getDigits(int r, LineId p, LineId q) {
+        ArrayList<Integer> digits = new ArrayList<>();
+        getDigits(digits, Integer.toString(r), p, q);
+        return digits;
+    }
+
+    /**
+     * Helper function that takes a Number-string and extracts the valid digits to be able to create the
+     * lineId.
+     *
+     * @param digits
+     * @param prefix
+     * @param p
+     * @param q
+     * @return
+     */
+    private boolean getDigits(ArrayList<Integer> digits, String prefix, LineId p, LineId q) {
+        if(prefix.equals("")){
+            return true;
+        }
+        for (int i = prefix.length(); i > 0; i--) {
+            int digit = Integer.parseInt(prefix.substring(0, i));
+            ArrayList<Integer> temp = new ArrayList<>(digits);
+            temp.add(digit);
+            if(validDigits(temp, p, q) && getDigits(temp, prefix.substring(i), p, q)){
+                digits.clear();
+                digits.addAll(temp);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Helper function that checks if a list of digits is a valid lineId between p and q
+     *
+     * @param digits
+     * @param p
+     * @param q
+     * @return
+     */
+    private boolean validDigits(ArrayList<Integer> digits, LineId p, LineId q){
+        boolean greater = false;
+        boolean less = false;
+        for (int i = 0; i < digits.size(); i++) {
+            if(!greater && i < p.getPositions().size() && digits.get(i) < p.getPositions().get(i).getDigit())
+                return false;
+            if(!greater && i < p.getPositions().size() && digits.get(i) > p.getPositions().get(i).getDigit())
+                greater = true;
+            if(!less && i < q.getPositions().size() && digits.get(i) > q.getPositions().get(i).getDigit())
+                return false;
+            if(!less && i < q.getPositions().size() && digits.get(i) < q.getPositions().get(i).getDigit())
+                less = true;
+        }
+        return true;
+    }
+
     public int getClock() {
         return clock;
     }
 
     public Identifier getSite() {
         return site;
+    }
+
+    public ArrayList<String> getDocumentLines() {
+        return documentLines;
+    }
+
+    public ArrayList<LineId> getIdTable() {
+        return idTable;
     }
 }

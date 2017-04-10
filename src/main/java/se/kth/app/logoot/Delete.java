@@ -7,10 +7,10 @@ import java.io.Serializable;
  */
 public class Delete implements Operation, Serializable {
 
-    private Position id;
+    private LineId id;
     private String content;
 
-    public Delete(Position id, String content) {
+    public Delete(LineId id, String content) {
         this.id = id;
         this.content = content;
     }
@@ -29,12 +29,12 @@ public class Delete implements Operation, Serializable {
     }
 
     @Override
-    public Position getId() {
-        return null;
+    public LineId getId() {
+        return  id;
     }
 
     @Override
     public String getContent() {
-        return null;
+        return content;
     }
 }

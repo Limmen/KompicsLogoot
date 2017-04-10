@@ -1,4 +1,4 @@
-package se.kth.app.test;
+package se.kth.app.events;
 
 import com.google.common.base.Objects;
 import se.sics.kompics.KompicsEvent;

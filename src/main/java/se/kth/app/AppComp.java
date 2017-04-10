@@ -19,10 +19,10 @@ package se.kth.app;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.kth.app.test.Pang;
-import se.kth.app.test.Patch;
-import se.kth.app.test.Redo;
-import se.kth.app.test.Undo;
+import se.kth.app.events.Pang;
+import se.kth.app.events.Patch;
+import se.kth.app.events.Redo;
+import se.kth.app.events.Undo;
 import se.kth.broadcast.crb.event.CRBBroadcast;
 import se.kth.broadcast.crb.event.CRBDeliver;
 import se.kth.broadcast.crb.port.CausalOrderReliableBroadcast;

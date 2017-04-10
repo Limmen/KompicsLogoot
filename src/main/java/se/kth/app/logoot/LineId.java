@@ -41,4 +41,22 @@ public class LineId implements Serializable, Comparable {
         }
         return false;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LineId lineId = (LineId) o;
+        if(this.compareTo(lineId) == 0)
+            return true;
+        else
+            return false;
+    }
+
+    @Override
+    public String toString() {
+        return "LineId{" +
+                "positions=" + positions +
+                '}';
+    }
 }

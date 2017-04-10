@@ -59,4 +59,14 @@ public class Position implements Serializable, Comparable {
             return true;
         return false;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Position position = (Position) o;
+        if(this.compareTo(position) == 0)
+            return true;
+        else return false;
+    }
 }

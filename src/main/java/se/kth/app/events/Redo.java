@@ -1,4 +1,4 @@
-package se.kth.app.test;
+package se.kth.app.events;
 
 import se.kth.app.logoot.Position;
 import se.sics.kompics.KompicsEvent;
