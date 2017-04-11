@@ -1,4 +1,4 @@
-package se.kth.tests.logoot;
+package se.kth.tests.logoot.unit_tests;
 
 import com.google.common.collect.Lists;
 import org.junit.Assert;
@@ -50,7 +50,8 @@ public class DocumentTest {
 
         int n = 7;
         int boundary = 10;
-        List<LineId> list = document.generateLineId(p, q, n, boundary);
+        int clock = 0;
+        List<LineId> list = document.generateLineId(p, q, n, boundary, clock);
         Assert.assertEquals(n, list.size());
         for (LineId lineId : list) {
             for (Position position : lineId.getPositions()) {
@@ -60,14 +61,14 @@ public class DocumentTest {
         }
         n = 760;
         boundary = 10;
-        list = document.generateLineId(p, q, n, boundary);
+        list = document.generateLineId(p, q, n, boundary, clock);
         Assert.assertEquals(n, list.size());
         for (LineId lineId : list) {
             Position position0 = lineId.getPositions().get(0);
             Position position1 = lineId.getPositions().get(1);
             if (position0.equals(p.getPositions().get(0))) {
                 Assert.assertTrue(position1.getDigit() > 59);
-                Assert.assertTrue(position1.getDigit() < 100);
+                Assert.assertTrue(position1.getDigit() < Integer.MAX_VALUE);
             }
             if (position0.equals(q.getPositions().get(0))) {
                 Assert.assertTrue(position1.getDigit() >= 0);
@@ -77,7 +78,29 @@ public class DocumentTest {
                 Assert.assertTrue(position0.getDigit() > 2);
                 Assert.assertTrue(position0.getDigit() < 10);
                 Assert.assertTrue(position1.getDigit() >= 0);
-                Assert.assertTrue(position1.getDigit() < 100);
+                Assert.assertTrue(position1.getDigit() < Integer.MAX_VALUE);
+            }
+        }
+        n = 76102;
+        boundary = 10;
+        list = document.generateLineId(p, q, n, boundary, clock);
+        Assert.assertEquals(n, list.size());
+        for (LineId lineId : list) {
+            Position position0 = lineId.getPositions().get(0);
+            Position position1 = lineId.getPositions().get(1);
+            if (position0.equals(p.getPositions().get(0))) {
+                Assert.assertTrue(position1.getDigit() > 59);
+                Assert.assertTrue(position1.getDigit() < Integer.MAX_VALUE);
+            }
+            if (position0.equals(q.getPositions().get(0))) {
+                Assert.assertTrue(position1.getDigit() >= 0);
+                Assert.assertTrue(position1.getDigit() <= 20);
+            }
+            if (!position0.equals(q.getPositions().get(0)) && !position0.equals(p.getPositions().get(0))) {
+                Assert.assertTrue(position0.getDigit() > 2);
+                Assert.assertTrue(position0.getDigit() < 10);
+                Assert.assertTrue(position1.getDigit() >= 0);
+                Assert.assertTrue(position1.getDigit() < Integer.MAX_VALUE);
             }
         }
 
@@ -87,11 +110,11 @@ public class DocumentTest {
      * Test exeuction of insertion and deletion operations
      */
     @Test
-    public void executeTest(){
+    public void executeTest() {
         LineId firstId = new LineId(Lists.newArrayList(new Position(0, null, null)));
-        LineId lineId1 = new LineId(Lists.newArrayList(LineIdTest.generatePosition(131,1,4)));
-        LineId lineId2 = new LineId(Lists.newArrayList(LineIdTest.generatePosition(131,1,4), LineIdTest.generatePosition(2471,5,23)));
-        LineId lineId3 = new LineId(Lists.newArrayList(LineIdTest.generatePosition(131, 3 ,2)));
+        LineId lineId1 = new LineId(Lists.newArrayList(LineIdTest.generatePosition(131, 1, 4)));
+        LineId lineId2 = new LineId(Lists.newArrayList(LineIdTest.generatePosition(131, 1, 4), LineIdTest.generatePosition(2471, 5, 23)));
+        LineId lineId3 = new LineId(Lists.newArrayList(LineIdTest.generatePosition(131, 3, 2)));
         LineId endId = new LineId(Lists.newArrayList(new Position(Integer.MAX_VALUE - 1, null, null)));
 
 

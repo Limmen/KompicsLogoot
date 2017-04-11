@@ -1,4 +1,4 @@
-package se.kth.tests.logoot;
+package se.kth.tests.logoot.unit_tests;
 
 import junit.framework.Assert;
 import org.junit.Test;

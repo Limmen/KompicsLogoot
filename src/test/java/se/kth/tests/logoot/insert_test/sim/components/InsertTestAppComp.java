@@ -32,19 +32,21 @@ import se.kth.broadcast.crb.event.CRBBroadcast;
 import se.kth.broadcast.crb.event.CRBDeliver;
 import se.kth.broadcast.crb.port.CausalOrderReliableBroadcast;
 import se.sics.kompics.*;
+import se.sics.kompics.simulator.util.GlobalView;
 import se.sics.kompics.timer.SchedulePeriodicTimeout;
 import se.sics.kompics.timer.Timeout;
 import se.sics.kompics.timer.Timer;
 import se.sics.ktoolbox.util.identifiable.Identifier;
 import se.sics.ktoolbox.util.network.KAddress;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 /**
  * @author Alex Ormenisan <aaor@kth.se>
  */
-public class AppComp extends ComponentDefinition {
+public class InsertTestAppComp extends ComponentDefinition {
 
     private static final Logger LOG = LoggerFactory.getLogger(AppComp.class);
     private String logPrefix = " ";
@@ -58,19 +60,25 @@ public class AppComp extends ComponentDefinition {
     private final long delay = config().getValue("app.delay", Long.class);
     private Document document;
     private int clock = 0;
+    private int counter = 0;
+    private int numberOfInsertions;
 
-    public AppComp(Init init) {
+    public InsertTestAppComp(Init init) {
         selfAdr = init.selfAdr;
         logPrefix = "<nid:" + selfAdr.getId() + ">";
         LOG.info("{}initiating...", logPrefix);
         document = new Document(selfAdr.getId());
-
+        numberOfInsertions = init.numberOfInsertions;
         subscribe(handleStart, control);
         subscribe(redoHandler, broadcastPort);
         subscribe(undoHandler, broadcastPort);
         subscribe(pangHandler, broadcastPort);
         subscribe(patchHandler, broadcastPort);
         subscribe(handleTimeout, timerPort);
+        GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
+        ArrayList<CRBDeliver> delivered = new ArrayList();
+        gv.setValue(selfAdr.getId().toString()+"-delivered", delivered);
+        gv.setValue(selfAdr.getId().toString()+"-document", document);
     }
 
     protected Handler handleStart = new Handler<Start>() {
@@ -87,24 +95,26 @@ public class AppComp extends ComponentDefinition {
     protected final Handler<AppCompTimeout> handleTimeout = new Handler<AppCompTimeout>() {
         @Override
         public void handle(AppCompTimeout event) {
-            LOG.info("Timeout, triggering broadcast");
-            clock++;
-            LineId first = document.getIdTable().get(0);
-            LineId last = document.getIdTable().get(document.getIdTable().size()-1);
-            List<LineId> ids = document.generateLineId(first, last, 1, 10, clock);
-            CRBBroadcast broadcast = new CRBBroadcast(new Patch(Lists.newArrayList(new Insert(ids.get(0), "Node:" + selfAdr.getId() + ": test " + "\n"))));
-            trigger(broadcast, broadcastPort);
+            if(counter < numberOfInsertions) {
+                clock++;
+                LineId first = document.getIdTable().get(0);
+                LineId last = document.getIdTable().get(document.getIdTable().size() - 1);
+                List<LineId> ids = document.generateLineId(first, last, 1, 10, clock);
+                CRBBroadcast broadcast = new CRBBroadcast(new Patch(Lists.newArrayList(new Insert(ids.get(0), "Node:" + selfAdr.getId() + ": test " + "\n"))));
+                trigger(broadcast, broadcastPort);
+                counter++;
+            }
         }
     };
 
-    protected  ClassMatchedHandler<Redo, CRBDeliver> redoHandler = new ClassMatchedHandler<Redo, CRBDeliver>() {
+    protected ClassMatchedHandler<Redo, CRBDeliver> redoHandler = new ClassMatchedHandler<Redo, CRBDeliver>() {
         @Override
         public void handle(Redo redo, CRBDeliver crbDeliver) {
 
         }
     };
 
-    protected  ClassMatchedHandler<Undo, CRBDeliver> undoHandler = new ClassMatchedHandler<Undo, CRBDeliver>() {
+    protected ClassMatchedHandler<Undo, CRBDeliver> undoHandler = new ClassMatchedHandler<Undo, CRBDeliver>() {
         @Override
         public void handle(Undo undo, CRBDeliver crbDeliver) {
 
@@ -114,13 +124,17 @@ public class AppComp extends ComponentDefinition {
     protected ClassMatchedHandler<Patch, CRBDeliver> patchHandler = new ClassMatchedHandler<Patch, CRBDeliver>() {
         @Override
         public void handle(Patch patch, CRBDeliver crbDeliver) {
-            for (Operation op: patch.getOps()) {
-                int clock = op.getId().getPositions().get(op.getId().getPositions().size()-1).getClock();
+            GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
+            ArrayList<CRBDeliver> delivered = gv.getValue(selfAdr.getId().toString()+"-delivered", ArrayList.class);
+            delivered.add(crbDeliver);
+            gv.setValue(selfAdr.getId().toString()+"-delivered", delivered);
+            for (Operation op : patch.getOps()) {
+                int clock = op.getId().getPositions().get(op.getId().getPositions().size() - 1).getClock();
                 mergeClock(clock);
             }
             clock++;
             document.execute(patch);
-            LOG.info(document.toString());
+            gv.setValue(selfAdr.getId().toString()+"-document", document);
         }
     };
 
@@ -131,18 +145,20 @@ public class AppComp extends ComponentDefinition {
         }
     };
 
-    private void mergeClock(int c){
+    private void mergeClock(int c) {
         clock = Math.max(clock, c);
     }
 
-    public static class Init extends se.sics.kompics.Init<AppComp> {
+    public static class Init extends se.sics.kompics.Init<InsertTestAppComp> {
 
         public final KAddress selfAdr;
         public final Identifier gradientOId;
+        public final int numberOfInsertions;
 
-        public Init(KAddress selfAdr, Identifier gradientOId) {
+        public Init(KAddress selfAdr, Identifier gradientOId, int numberOfInsertions) {
             this.selfAdr = selfAdr;
             this.gradientOId = gradientOId;
+            this.numberOfInsertions = numberOfInsertions;
         }
     }
 

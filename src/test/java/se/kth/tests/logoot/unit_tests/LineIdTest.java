@@ -1,4 +1,4 @@
-package se.kth.tests.logoot;
+package se.kth.tests.logoot.unit_tests;
 
 import com.google.common.collect.Lists;
 import junit.framework.Assert;

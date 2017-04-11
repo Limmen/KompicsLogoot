@@ -1,7 +1,8 @@
-package se.kth.tests.beb_test.sim.components;
+package se.kth.tests.logoot.insert_test.sim.components;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.kth.app.logoot.Document;
 import se.kth.broadcast.crb.event.CRBDeliver;
 import se.kth.sim.common.result.SimulationResultMap;
 import se.kth.sim.common.result.SimulationResultSingleton;
@@ -16,16 +17,14 @@ import se.sics.kompics.timer.Timeout;
 import se.sics.kompics.timer.Timer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
- * @author Kim Hammar on 2017-04-04.
+ * @author Kim Hammar on 2017-04-11.
  */
-public class BEBTestObserver extends ComponentDefinition {
+public class InsertTestObserver extends ComponentDefinition {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BEBTestObserver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InsertTestObserver.class);
     private Positive<Network> network = requires(Network.class);
     private Positive<Timer> timer = requires(Timer.class);
 
@@ -33,12 +32,12 @@ public class BEBTestObserver extends ComponentDefinition {
     private UUID timerId;
     private int[] nodesState;
     private int numberOfNodes;
-    private int numberOfBroadcasts;
+    private int numberOfInsertionsPerNode;
     private final static SimulationResultMap result = SimulationResultSingleton.getInstance();
 
-    public BEBTestObserver(Init init) {
+    public InsertTestObserver(Init init) {
         numberOfNodes = init.numberOfNodes;
-        numberOfBroadcasts = init.numberOfBroadcasts;
+        numberOfInsertionsPerNode = init.numberOfInsertionsPerNode;
         nodesState = new int[numberOfNodes];
         subscribe(handleStart, control);
         subscribe(handleTimeout, timer);
@@ -59,13 +58,14 @@ public class BEBTestObserver extends ComponentDefinition {
         public void handle(ObserverTimeout event) {
             GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
             for (int i = 0; i < numberOfNodes; i++) {
-                ArrayList<CRBDeliver> delivered = gv.getValue(Integer.toString(i + 1), ArrayList.class);
+                ArrayList<CRBDeliver> delivered = gv.getValue(Integer.toString(i + 1)+"-delivered", ArrayList.class);
+                LOG.info(("Delivered NULL:; ") + delivered);
                 LOG.info("Delivered Size: " + delivered.size());
                 nodesState[i] = delivered.size();
             }
             boolean done = true;
             for (int i = 0; i < numberOfNodes; i++) {
-                if (nodesState[i] < numberOfBroadcasts * numberOfNodes)
+                if (nodesState[i] < numberOfInsertionsPerNode * numberOfNodes)
                     done = false;
             }
             if (done) {
@@ -80,25 +80,22 @@ public class BEBTestObserver extends ComponentDefinition {
 
     private void saveSimulationResult() {
         GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
+
         for (int i = 0; i < numberOfNodes; i++) {
-            Map<Integer, String> nodeState = new HashMap<>();
-            ArrayList<CRBDeliver> delivered = gv.getValue(Integer.toString(i + 1), ArrayList.class);
-            for (int j = 0; j < delivered.size(); j++) {
-                nodeState.put(j, delivered.get(j).getMsg().toString());
-            }
-            result.put(Integer.toString(i), nodeState);
+            Document document = gv.getValue(Integer.toString(i + 1)+"-document", Document.class);
+            result.put(Integer.toString(i), document.getDocumentLines());
         }
     }
 
 
-    public static class Init extends se.sics.kompics.Init<BEBTestObserver> {
+    public static class Init extends se.sics.kompics.Init<InsertTestObserver> {
 
         public final int numberOfNodes;
-        public final int numberOfBroadcasts;
+        public final int numberOfInsertionsPerNode;
 
-        public Init(int numberOfNodes, int numberOfBroadcasts) {
+        public Init(int numberOfNodes, int numberOfInsertionsPerNode) {
             this.numberOfNodes = numberOfNodes;
-            this.numberOfBroadcasts = numberOfBroadcasts;
+            this.numberOfInsertionsPerNode = numberOfInsertionsPerNode;
         }
     }
 

@@ -1,32 +1,16 @@
-/*
- * 2016 Royal Institute of Technology (KTH)
- *
- * LSelector is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-package se.kth.sim.common.scenarios;
+package se.kth.tests.logoot.insert_test.sim.scenarios;
 
 import se.kth.sim.common.operations.CommonOperations;
+import se.kth.tests.logoot.insert_test.sim.operations.InsertTestOperations;
 import se.sics.kompics.simulator.SimulationScenario;
+import se.sics.kompics.simulator.adaptor.distributions.ConstantDistribution;
 import se.sics.kompics.simulator.adaptor.distributions.extra.BasicIntSequentialDistribution;
 
 /**
- * @author Alex Ormenisan <aaor@kth.se>
+ * @author Kim Hammar on 2017-04-11.
  */
-public class CommonScenarios {
-
-    public static SimulationScenario simpleBoot() {
+public class InsertTestScenarios {
+    public static SimulationScenario insertionTest(final int numberOfNodes, final int numberOfInserts) {
         SimulationScenario scen = new SimulationScenario() {
             {
                 StochasticProcess systemSetup = new StochasticProcess() {
@@ -41,17 +25,24 @@ public class CommonScenarios {
                         raise(1, CommonOperations.startBootstrapServerOp);
                     }
                 };
+                StochasticProcess startObserver = new StochasticProcess() {
+                    {
+                        eventInterArrivalTime(constant(1000));
+                        raise(1, InsertTestOperations.startObserverOp, new ConstantDistribution<Integer>(Integer.class, numberOfNodes), new ConstantDistribution<Integer>(Integer.class, numberOfInserts));
+                    }
+                };
                 StochasticProcess startPeers = new StochasticProcess() {
                     {
                         eventInterArrivalTime(uniform(1000, 1100));
-                        raise(50, CommonOperations.startNodeOp, new BasicIntSequentialDistribution(1));
+                        raise(numberOfNodes, InsertTestOperations.startNodeOp, new BasicIntSequentialDistribution(1), new ConstantDistribution<Integer>(Integer.class, numberOfInserts));
                     }
                 };
 
                 systemSetup.start();
                 startBootstrapServer.startAfterTerminationOf(1000, systemSetup);
                 startPeers.startAfterTerminationOf(1000, startBootstrapServer);
-                terminateAfterTerminationOf(1000, startPeers);
+                startObserver.startAfterTerminationOf(1000, startPeers);
+                terminateAfterTerminationOf(100000*100000, startPeers);
             }
         };
 

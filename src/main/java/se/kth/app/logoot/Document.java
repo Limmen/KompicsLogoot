@@ -13,7 +13,6 @@ import java.util.*;
  */
 public class Document {
 
-    private int clock = 0;
     private Identifier site;
     private Random random = new Random();
     private ArrayList<String> documentLines;
@@ -80,7 +79,7 @@ public class Document {
      * @param boundary boundary between successive lines
      * @return
      */
-    public List<LineId> generateLineId(LineId p, LineId q, int N, int boundary) {
+    public List<LineId> generateLineId(LineId p, LineId q, int N, int boundary, int clock) {
         List<LineId> list = new ArrayList<>();
         int index = 0;
         int interval = 0;
@@ -91,7 +90,7 @@ public class Document {
         int step = Math.min(interval / N, boundary);
         int r = prefix(p, index);
         for (int j = 0; j < N; j++) {
-            list.add(construct(r + random.nextInt(step) + 1, p, q));
+            list.add(construct(r + random.nextInt(step) + 1, p, q, clock));
             r = r + step;
         }
         return list;
@@ -128,7 +127,7 @@ public class Document {
      * @param q
      * @return LineId
      */
-    private LineId construct(int r, LineId p, LineId q) {
+    private LineId construct(int r, LineId p, LineId q, int clock) {
         ArrayList<Position> positions = new ArrayList<>();
         ArrayList<Integer> digits = getDigits(r, p, q);
         for (int i = 0; i < digits.size(); i++) {
@@ -216,10 +215,6 @@ public class Document {
         return true;
     }
 
-    public int getClock() {
-        return clock;
-    }
-
     public Identifier getSite() {
         return site;
     }
@@ -231,4 +226,15 @@ public class Document {
     public ArrayList<LineId> getIdTable() {
         return idTable;
     }
+
+    @Override
+    public String toString() {
+        String doc = "\n" + "-------- <Document Start> --------" +  "\n";
+        for (String line: documentLines) {
+            doc = doc + line;
+        }
+        doc = doc + "\n" + "-------- <Document End> --------" + "\n";
+        return doc;
+    }
 }
+
