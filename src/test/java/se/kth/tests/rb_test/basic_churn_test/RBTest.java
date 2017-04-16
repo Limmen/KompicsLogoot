@@ -12,7 +12,7 @@ import se.sics.kompics.simulator.run.LauncherComp;
 import java.util.HashSet;
 
 /**
- * SimulationScenario to events that the Reliable Broadcast properties hold even when some nodes are prone to churn.
+ * SimulationScenario to tests that the Reliable Broadcast properties hold even when some nodes are prone to churn.
  *
  * @author Maxime Dufour on 2017-04-06.
  */
@@ -24,8 +24,8 @@ public class RBTest {
     private final static SimulationResultMap result = SimulationResultSingleton.getInstance();
 
     /**
-     * This events aims to check if in churn systems all nodes eventually delivered all messages. This events relies
-     * on creation and duplication property and will only events ("if a correct node delivers a message, every correct
+     * This test aims to check if in churn systems all nodes eventually delivered all messages. This test relies
+     * on no-creation and duplication property and will only test ("if a correct node delivers a message, every correct
      * nodes deliver the message").
      */
     @Test

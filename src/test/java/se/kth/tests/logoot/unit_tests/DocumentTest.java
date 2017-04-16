@@ -12,7 +12,7 @@ import se.sics.ktoolbox.util.network.KAddress;
 import java.util.List;
 
 /**
- * Unit events-suite for Document class
+ * Unit tests-suite for Document class
  *
  * @author Kim Hammar on 2017-04-08.
  */

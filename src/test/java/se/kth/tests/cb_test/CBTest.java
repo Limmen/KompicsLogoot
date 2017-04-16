@@ -22,7 +22,7 @@ public class CBTest {
     private final static SimulationResultMap result = SimulationResultSingleton.getInstance();
 
     /**
-     * This events aims to check if the causal order delivery property holds in th system. In this events, there are only
+     * This test aims to check if the causal order delivery property holds in th system. In this test, there are only
      * correct nodes. To prove this property, a Lamport timestamp is added in Pang object and are incremented as
      * specified in the Lamport principle
      */

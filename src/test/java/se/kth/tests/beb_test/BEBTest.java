@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  *
- * SimulationScenario to events correctness of the Best-Effort broadcast abstraction
+ * SimulationScenario to test correctness of the Best-Effort broadcast abstraction
  *
  * @author Kim Hammar on 2017-04-04.
  */

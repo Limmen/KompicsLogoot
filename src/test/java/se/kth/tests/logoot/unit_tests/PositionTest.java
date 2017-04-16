@@ -7,7 +7,7 @@ import se.kth.sim.common.util.ScenarioSetup;
 import se.sics.ktoolbox.util.network.KAddress;
 
 /**
- * Unit events-suite for Position class
+ * Unit test-suite for Position class
  *
  * @author Kim Hammar on 2017-04-08.
  */
