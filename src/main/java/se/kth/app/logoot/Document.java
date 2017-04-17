@@ -17,7 +17,7 @@ public class Document {
     private Random random = new Random();
     private ArrayList<String> documentLines;
     private ArrayList<LineId> idTable;
-    private HashMap<LineId, Operation> hb;
+    private HashMap<UUID, Patch> hb;
     private HashMap<LineId, Integer> cemetery;
 
     /**
@@ -44,9 +44,14 @@ public class Document {
      */
     public void execute(Patch patch) {
         for (Operation op : patch.getOps()) {
-            int position;
+            int position, degree;
             switch (op.getOperationType()) {
                 case INSERT:
+                    degree = getCemetery(op.getId()) + 1;
+                    if (degree != 1) {
+                        setCemetery(op.getId(), degree);
+                        continue;
+                    }
                     if (!idTable.contains(op.getId())) {
                         idTable.add(op.getId());
                         Collections.sort(idTable);
@@ -62,7 +67,11 @@ public class Document {
                     if (idTable.get(position).equals(op.getId())) {
                         documentLines.remove(position-1);
                         idTable.remove(position);
+                        degree = 0;
+                    } else {
+                        degree = getCemetery(op.getId()) - 1;
                     }
+                    setCemetery(op.getId(), degree);
                     break;
             }
         }
@@ -236,5 +245,35 @@ public class Document {
         doc = doc + "\n" + "-------- <Document End> --------" + "\n";
         return doc;
     }
+
+    public Patch insertPatchHB(Patch patch) {
+        /**
+         * We create a new patch to avoid working on the shared version
+         */
+        Patch temp = new Patch(patch);
+        hb.put(patch.getUuid(), temp);
+        return temp;
+    }
+
+    public Patch getPatch(UUID patchId){
+        return hb.get(patchId);
+    }
+
+    private int getCemetery(LineId  lineId) {
+        Integer degree = cemetery.get(lineId);
+        if (degree == null) {
+            return 0;
+        }
+        return degree;
+    }
+
+    private void setCemetery(LineId lineId, int degree) {
+        if (degree == 0) {
+            cemetery.remove(lineId);
+            return;
+        }
+        cemetery.put(lineId, degree);
+    }
+
 }
 

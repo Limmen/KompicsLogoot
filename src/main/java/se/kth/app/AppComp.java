@@ -100,14 +100,30 @@ public class AppComp extends ComponentDefinition {
     protected  ClassMatchedHandler<Redo, CRBDeliver> redoHandler = new ClassMatchedHandler<Redo, CRBDeliver>() {
         @Override
         public void handle(Redo redo, CRBDeliver crbDeliver) {
-
+            Patch patch = document.getPatch(redo.getPatchId());
+            if (patch == null) {
+                LOG.warn("The patch was not previously seen, ERROR");
+                return;
+            }
+            patch.incrDegree();
+            if (patch.getDegree() == 1) {
+                document.execute(patch);
+            }
         }
     };
 
     protected  ClassMatchedHandler<Undo, CRBDeliver> undoHandler = new ClassMatchedHandler<Undo, CRBDeliver>() {
         @Override
         public void handle(Undo undo, CRBDeliver crbDeliver) {
-
+            Patch patch = document.getPatch(undo.getPatchId());
+            if (patch == null) {
+                LOG.warn("The patch was not previously seen, ERROR");
+                return;
+            }
+            patch.decrDegree();
+            if (patch.getDegree() == 0) {
+                document.execute(patch.inverse());
+            }
         }
     };
 
@@ -120,6 +136,8 @@ public class AppComp extends ComponentDefinition {
             }
             clock++;
             document.execute(patch);
+            Patch newPatch = document.insertPatchHB(patch);
+            newPatch.setDegree(1);
             LOG.info(document.toString());
         }
     };

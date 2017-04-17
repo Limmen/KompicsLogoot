@@ -4,19 +4,20 @@ import se.kth.app.logoot.Position;
 import se.sics.kompics.KompicsEvent;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * @author Maxime Dufour on 2017-04-07.
  */
 public class Redo implements KompicsEvent, Serializable {
 
-    private Position patchId;
+    private UUID patchId;
 
-    public Redo(Position patchId) {
+    public Redo(UUID patchId) {
         this.patchId = patchId;
     }
 
-    public Position getPatchId() {
+    public UUID getPatchId() {
         return patchId;
     }
 
