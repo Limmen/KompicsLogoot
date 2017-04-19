@@ -1,4 +1,4 @@
-package se.kth.tests.logoot.undo_test.sim.components;
+package se.kth.tests.logoot.delete_test.sim.components;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 /**
- * @author Maxime Dufour on 2017-04-19.
+ * @author Kim Hammar on 2017-04-11.
  */
-public class UndoTestObserver extends ComponentDefinition {
+public class DeleteTestObserver extends ComponentDefinition {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UndoTestObserver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DeleteTestObserver.class);
     private Positive<Network> network = requires(Network.class);
     private Positive<Timer> timer = requires(Timer.class);
 
@@ -33,11 +33,13 @@ public class UndoTestObserver extends ComponentDefinition {
     private int[] nodesState;
     private int numberOfNodes;
     private int numberOfInsertionsPerNode;
+    private int numberOfDeletionsPerNode;
     private final static SimulationResultMap result = SimulationResultSingleton.getInstance();
 
-    public UndoTestObserver(Init init) {
+    public DeleteTestObserver(Init init) {
         numberOfNodes = init.numberOfNodes;
         numberOfInsertionsPerNode = init.numberOfInsertionsPerNode;
+        numberOfDeletionsPerNode = init.numberOfDeletionsPerNode;
         nodesState = new int[numberOfNodes];
         subscribe(handleStart, control);
         subscribe(handleTimeout, timer);
@@ -58,13 +60,13 @@ public class UndoTestObserver extends ComponentDefinition {
         public void handle(ObserverTimeout event) {
             GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
             for (int i = 0; i < numberOfNodes; i++) {
-                ArrayList<CRBDeliver> delivered = gv.getValue(Integer.toString(i + 1) + "-delivered", ArrayList.class);
+                ArrayList<CRBDeliver> delivered = gv.getValue(Integer.toString(i + 1)+"-delivered", ArrayList.class);
                 LOG.info("Delivered Size: " + delivered.size());
                 nodesState[i] = delivered.size();
             }
             boolean done = true;
             for (int i = 0; i < numberOfNodes; i++) {
-                if (nodesState[i] < 2 * numberOfInsertionsPerNode * numberOfNodes)
+                if (nodesState[i] < (numberOfInsertionsPerNode + numberOfDeletionsPerNode) * numberOfNodes)
                     done = false;
             }
             if (done) {
@@ -81,20 +83,22 @@ public class UndoTestObserver extends ComponentDefinition {
         GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
 
         for (int i = 0; i < numberOfNodes; i++) {
-            Document document = gv.getValue(Integer.toString(i + 1) + "-document", Document.class);
+            Document document = gv.getValue(Integer.toString(i + 1)+"-document", Document.class);
             result.put(Integer.toString(i), document.getDocumentLines());
         }
     }
 
 
-    public static class Init extends se.sics.kompics.Init<UndoTestObserver> {
+    public static class Init extends se.sics.kompics.Init<DeleteTestObserver> {
 
         public final int numberOfNodes;
         public final int numberOfInsertionsPerNode;
+        public final int numberOfDeletionsPerNode;
 
-        public Init(int numberOfNodes, int numberOfInsertionsPerNode) {
+        public Init(int numberOfNodes, int numberOfInsertionsPerNode, int numberOfDeletionsPerNode) {
             this.numberOfNodes = numberOfNodes;
             this.numberOfInsertionsPerNode = numberOfInsertionsPerNode;
+            this.numberOfDeletionsPerNode = numberOfDeletionsPerNode;
         }
     }
 

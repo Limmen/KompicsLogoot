@@ -33,7 +33,7 @@ public class LogootInsertTest {
          * In a logoot-document concurrent insertions commute due to unique totally ordered Identifiers. I.e when a set of nodes
          * perform a finite set of insertions concurrently and broadcast operations to each other, eventual consistency should be
          * achieved, i.e when the system is idle all nodes should reach the same state.
-         * The scenario is terminated when the InsertTestObserver notices that all nodes have delivered all operations.
+         * The scenario is terminated when the DeleteTestObserver notices that all nodes have delivered all operations.
          */
         SimulationScenario insertionTestScenario = InsertTestScenarios.insertionTest(NODES_NO, INSERTIONS_NO);
         insertionTestScenario.simulate(LauncherComp.class);

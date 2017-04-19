@@ -37,5 +37,6 @@ public class LogootUndoTest {
             Assert.assertEquals(0,document.size());
         }
 
+
     }
 }

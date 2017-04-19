@@ -29,6 +29,7 @@ public class PatchTest {
         Patch patch = new Patch(Lists.<Operation>newArrayList(operation1, operation2, operation3));
         Patch invertedPatch = patch.inverse();
 
+        Assert.assertEquals(patch.getOps().size(), invertedPatch.getOps().size());
         Assert.assertTrue(invertedPatch.getOps().stream().allMatch(op -> op.getOperationType() == OperationType.DELETE));
 
         /**
@@ -41,6 +42,7 @@ public class PatchTest {
         patch = new Patch(Lists.<Operation>newArrayList(operation1, operation2, operation3));
         invertedPatch = patch.inverse();
 
+        Assert.assertEquals(patch.getOps().size(), invertedPatch.getOps().size());
         Assert.assertTrue(invertedPatch.getOps().stream().allMatch(op -> op.getOperationType() == OperationType.INSERT));
 
         /**
@@ -53,6 +55,7 @@ public class PatchTest {
         patch = new Patch(Lists.<Operation>newArrayList(operation1, operation2, operation3));
         invertedPatch = patch.inverse();
 
+        Assert.assertEquals(patch.getOps().size(), invertedPatch.getOps().size());
         Assert.assertEquals(OperationType.DELETE, invertedPatch.getOps().get(0).getOperationType());
         Assert.assertEquals(OperationType.INSERT, invertedPatch.getOps().get(1).getOperationType());
         Assert.assertEquals(OperationType.DELETE, invertedPatch.getOps().get(2).getOperationType());

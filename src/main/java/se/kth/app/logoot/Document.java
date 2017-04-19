@@ -63,9 +63,9 @@ public class Document {
                     }
                     break;
                 case DELETE:
-                    position = Collections.binarySearch((List) idTable, op.getId());
-                    if (idTable.get(position).equals(op.getId())) {
-                        documentLines.remove(position-1);
+                    if(idTable.contains(op.getId())) {
+                        position = Collections.binarySearch((List) idTable, op.getId());
+                        documentLines.remove(position - 1);
                         idTable.remove(position);
                         degree = 0;
                     } else {

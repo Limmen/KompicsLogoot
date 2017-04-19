@@ -59,7 +59,6 @@ public class InsertTestObserver extends ComponentDefinition {
             GlobalView gv = config().getValue("simulation.globalview", GlobalView.class);
             for (int i = 0; i < numberOfNodes; i++) {
                 ArrayList<CRBDeliver> delivered = gv.getValue(Integer.toString(i + 1)+"-delivered", ArrayList.class);
-                LOG.info(("Delivered NULL:; ") + delivered);
                 LOG.info("Delivered Size: " + delivered.size());
                 nodesState[i] = delivered.size();
             }

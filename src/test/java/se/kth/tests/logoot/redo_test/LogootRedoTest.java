@@ -23,7 +23,7 @@ public class LogootRedoTest {
     /**
      * This test aims to test the redo operation, each nodes insert the same number of lines and after the INSERTIONS_NO
      * lines are insert by each node, they undo their own insertions and finally they restore the lines. We expected at the end, the number of lines in the
-     * document is equals to NODES_NO*INSERTIONS_NO
+     * document is equals to NODES_NO*INSERTIONS_NO and that all nodes contain the same state (eventual consistency).
      */
     @Test
     public void redoTest() {
@@ -32,9 +32,11 @@ public class LogootRedoTest {
         SimulationScenario redoTestScenario = RedoTestScenarios.redoTest(NODES_NO, INSERTIONS_NO);
         redoTestScenario.simulate(LauncherComp.class);
 
+        ArrayList<String> referenceDocument = result.get("0", ArrayList.class);
         for(int i = 0; i < NODES_NO; i++){
             ArrayList<String> document = result.get(Integer.toString(i), ArrayList.class);
             Assert.assertEquals(NODES_NO*INSERTIONS_NO, document.size());
+            Assert.assertEquals(referenceDocument, document);
         }
 
     }
