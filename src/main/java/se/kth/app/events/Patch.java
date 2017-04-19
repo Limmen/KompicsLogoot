@@ -71,8 +71,10 @@ public class Patch implements KompicsEvent, Serializable {
             switch (operation.getOperationType()){
                 case INSERT:
                     operations.addFirst(new Delete(operation.getId(),operation.getContent()));
+                    break;
                 case DELETE:
                     operations.addFirst(new Insert(operation.getId(),operation.getContent()));
+                    break;
             }
         }
         return new Patch(operations);
