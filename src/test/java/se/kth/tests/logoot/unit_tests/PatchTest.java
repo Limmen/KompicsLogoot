@@ -18,6 +18,7 @@ public class PatchTest {
         LineId lineId1 = new LineId(Lists.newArrayList(LineIdTest.generatePosition(131, 1, 4)));
         LineId lineId2 = new LineId(Lists.newArrayList(LineIdTest.generatePosition(131, 1, 4), LineIdTest.generatePosition(2471, 5, 23)));
         LineId lineId3 = new LineId(Lists.newArrayList(LineIdTest.generatePosition(131, 3, 2)));
+        LineId lineId4 = new LineId(Lists.newArrayList(LineIdTest.generatePosition(132, 3, 2)));
 
         /**
          * Test inverse patch of only insertions
@@ -51,13 +52,15 @@ public class PatchTest {
         operation1 = new Insert(lineId1, "first line");
         operation2 = new Delete(lineId2, "second line");
         operation3 = new Insert(lineId3, "third line");
+        Operation operation4 = new Insert(lineId4, "forth line");
 
-        patch = new Patch(Lists.<Operation>newArrayList(operation1, operation2, operation3));
+        patch = new Patch(Lists.<Operation>newArrayList(operation1, operation2, operation3, operation4));
         invertedPatch = patch.inverse();
 
         Assert.assertEquals(patch.getOps().size(), invertedPatch.getOps().size());
         Assert.assertEquals(OperationType.DELETE, invertedPatch.getOps().get(0).getOperationType());
-        Assert.assertEquals(OperationType.INSERT, invertedPatch.getOps().get(1).getOperationType());
-        Assert.assertEquals(OperationType.DELETE, invertedPatch.getOps().get(2).getOperationType());
+        Assert.assertEquals(OperationType.DELETE, invertedPatch.getOps().get(1).getOperationType());
+        Assert.assertEquals(OperationType.INSERT, invertedPatch.getOps().get(2).getOperationType());
+        Assert.assertEquals(OperationType.DELETE, invertedPatch.getOps().get(3).getOperationType());
     }
 }
