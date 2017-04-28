@@ -121,11 +121,7 @@ public class Document {
             else
                 digits = digits + "0";
         }
-        int num = Integer.parseInt(digits);
-        if (num < Integer.MAX_VALUE - 1)
-            return num;
-        else
-            return Integer.MAX_VALUE - 2;
+        return Integer.parseInt(digits);
     }
 
     /**
