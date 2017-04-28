@@ -60,6 +60,8 @@ public class InsertTestHostMngrComp extends ComponentDefinition {
         logPrefix = "<nid:" + selfAdr.getId() + ">";
         LOG.info("{}initiating...", logPrefix);
 
+
+
         bootstrapServer = init.bootstrapServer;
         croupierId = init.croupierId;
 

@@ -67,6 +67,11 @@ public class RBTestHostMngrComp extends ComponentDefinition {
         bootstrapServer = init.bootstrapServer;
         croupierId = init.croupierId;
 
+        connectBootstrapClient();
+        connectOverlayMngr();
+        connectApp();
+
+
         subscribe(handleStart, control);
     }
 
@@ -74,13 +79,6 @@ public class RBTestHostMngrComp extends ComponentDefinition {
         @Override
         public void handle(Start event) {
             LOG.info("{}starting...", logPrefix);
-            connectBootstrapClient();
-            connectOverlayMngr();
-            connectApp();
-
-            trigger(Start.event, bootstrapClientComp.control());
-            trigger(Start.event, overlayMngrComp.control());
-            trigger(Start.event, appMngrComp.control());
 
             Boolean churn = config().getValue("system.churn", Boolean.class);
             if (churn) {

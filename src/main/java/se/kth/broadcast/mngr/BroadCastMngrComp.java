@@ -35,16 +35,14 @@ public class BroadCastMngrComp extends ComponentDefinition {
         selfAdr = init.selfAdr;
         extPorts = init.extPorts;
         appComp = init.appComp;
+        connectBroadcast();
         subscribe(handleStart, control);
     }
 
     Handler handleStart = new Handler<Start>() {
         @Override
         public void handle(Start event) {
-            connectBroadcast();
-            trigger(Start.event, gbeb.control());
-            trigger(Start.event, rb.control());
-            trigger(Start.event, cb.control());
+            LOG.info("starting...");
         }
     };
 
