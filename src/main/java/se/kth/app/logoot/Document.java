@@ -220,14 +220,28 @@ public class Document {
         return true;
     }
 
+    /**
+     * GetSite of the doucment
+     *
+     * @return
+     */
     public Identifier getSite() {
         return site;
     }
 
+    /**
+     * Get lines of the document
+     *
+     * @return list of lines
+     */
     public ArrayList<String> getDocumentLines() {
         return documentLines;
     }
 
+    /**
+     * Get table of lineIds.
+     * @return
+     */
     public ArrayList<LineId> getIdTable() {
         return idTable;
     }
@@ -242,6 +256,12 @@ public class Document {
         return doc;
     }
 
+    /**
+     * Insert patch into HB
+     *
+     * @param patch
+     * @return
+     */
     public Patch insertPatchHB(Patch patch) {
         /**
          * We create a new patch to avoid working on the shared version
@@ -251,10 +271,22 @@ public class Document {
         return temp;
     }
 
+    /**
+     * Get patch with given patchId
+     *
+     * @param patchId
+     * @return
+     */
     public Patch getPatch(UUID patchId){
         return hb.get(patchId);
     }
 
+    /**
+     * Get cemetery degree of given lineId
+     *
+     * @param lineId
+     * @return
+     */
     private int getCemetery(LineId  lineId) {
         Integer degree = cemetery.get(lineId);
         if (degree == null) {
@@ -263,6 +295,12 @@ public class Document {
         return degree;
     }
 
+    /**
+     * Set degree in cemetery for given lineId
+     *
+     * @param lineId
+     * @param degree
+     */
     private void setCemetery(LineId lineId, int degree) {
         if (degree == 0) {
             cemetery.remove(lineId);

@@ -23,6 +23,10 @@ import se.sics.ktoolbox.util.network.basic.BasicHeader;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * Gossip-Best-Effort-Broadcast component.
+ * The component is connected to a PSS that provides it with a new set of neighbors periodically.
+ */
 public class GBEB extends ComponentDefinition {
 
 
@@ -37,6 +41,11 @@ public class GBEB extends ComponentDefinition {
     private HashSet<Pair<KAddress, KompicsEvent>> past;
 
 
+    /**
+     * Initialize component and subscribe to channels.
+     *
+     * @param init
+     */
     public GBEB(Init init) {
         past = new HashSet<>();
         selfAdr = init.selfAdr;
@@ -89,7 +98,6 @@ public class GBEB extends ComponentDefinition {
             LOG.debug("HistoryResponse received by {} from {}", selfAdr, container.getHeader().getSource());
             HashSet<Pair<KAddress, KompicsEvent>> unseen = new HashSet<>(historyResponse.getHistory());
             unseen.removeAll(past);
-            //LOG.info("Unseen size: " + unseen.size() + " past size: " + past.size() + "  hist size: " + historyResponse.getHistory().size());
             for (Pair<KAddress, KompicsEvent> pair : unseen) {
                 LOG.debug("BEBDeliver sent to {}", selfAdr);
                 trigger(new GBEBDeliver(pair.p1, pair.p2), gbeb);
@@ -99,6 +107,9 @@ public class GBEB extends ComponentDefinition {
     };
 
 
+    /**
+     * Init-event with the address of the node
+     */
     public static class Init extends se.sics.kompics.Init<GBEB> {
         public final KAddress selfAdr;
 

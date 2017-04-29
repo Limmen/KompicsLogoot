@@ -26,6 +26,8 @@ import se.sics.ktoolbox.util.identifiable.overlay.OverlayIdFactory;
 import se.sics.ktoolbox.util.identifiable.overlay.OverlayRegistry;
 
 /**
+ * Utility class for system setup functions
+ *
  * @author Alex Ormenisan <aaor@kth.se>
  */
 public class SystemSetup {

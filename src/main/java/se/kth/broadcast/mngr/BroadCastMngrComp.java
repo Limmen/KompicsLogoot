@@ -15,6 +15,8 @@ import se.sics.ktoolbox.croupier.CroupierPort;
 import se.sics.ktoolbox.util.network.KAddress;
 
 /**
+ * Manager component that creates and connects broadcast abstractions.
+ *
  * @author Kim Hammar on 2017-04-04.
  */
 public class BroadCastMngrComp extends ComponentDefinition {
@@ -31,6 +33,11 @@ public class BroadCastMngrComp extends ComponentDefinition {
     private Component rb;
     private Component gbeb;
 
+    /**
+     * Initializes component and connect/create broadcasts component.
+     *
+     * @param init
+     */
     public BroadCastMngrComp(Init init) {
         selfAdr = init.selfAdr;
         extPorts = init.extPorts;
@@ -57,6 +64,9 @@ public class BroadCastMngrComp extends ComponentDefinition {
         connect(gbeb.getNegative(CroupierPort.class), extPorts.croupierPort, Channel.TWO_WAY);
     }
 
+    /**
+     * Initialization information, selfADdress, appcomponent to connect with broadcasts and external ports.
+     */
     public static class Init extends se.sics.kompics.Init<BroadCastMngrComp> {
 
         public final ExtPort extPorts;
@@ -70,6 +80,9 @@ public class BroadCastMngrComp extends ComponentDefinition {
         }
     }
 
+    /**
+     * External prots, network and croupier.
+     */
     public static class ExtPort {
         public final Positive<Network> networkPort;
         public final Positive<CroupierPort> croupierPort;

@@ -34,6 +34,8 @@ import se.sics.ktoolbox.util.network.nat.NatAwareAddress;
 import se.sics.ktoolbox.util.overlays.view.OverlayViewUpdatePort;
 
 /**
+ * Top-level component representing a peer. Connects lower-layer components.
+ *
  * @author Alex Ormenisan <aaor@kth.se>
  */
 public class HostMngrComp extends ComponentDefinition {
@@ -53,6 +55,12 @@ public class HostMngrComp extends ComponentDefinition {
     private Component overlayMngrComp;
     private Component appMngrComp;
 
+    /**
+     * Intialize peer with address and then connect bootStrapClient with server and connect OverLayMngr components
+     * and connect app-components.
+     *
+     * @param init event with selfaddress, bootserverAddress, croupierId.
+     */
     public HostMngrComp(Init init) {
         selfAdr = init.selfAdr;
         logPrefix = "<nid:" + selfAdr.getId() + ">";
@@ -95,6 +103,9 @@ public class HostMngrComp extends ComponentDefinition {
         connect(appMngrComp.getNegative(OverlayMngrPort.class), overlayMngrComp.getPositive(OverlayMngrPort.class), Channel.TWO_WAY);
     }
 
+    /**
+     * Init-event with self-address, address of bootserver and croupierId.
+     */
     public static class Init extends se.sics.kompics.Init<HostMngrComp> {
 
         public final KAddress selfAdr;

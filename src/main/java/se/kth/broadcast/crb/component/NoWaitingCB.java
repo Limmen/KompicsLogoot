@@ -3,6 +3,7 @@ package se.kth.broadcast.crb.component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.kth.broadcast.crb.event.CRBBroadcast;
+import se.kth.broadcast.crb.event.CRBData;
 import se.kth.broadcast.crb.event.CRBDeliver;
 import se.kth.broadcast.crb.port.CausalOrderReliableBroadcast;
 import se.kth.broadcast.gossipbeb.component.Pair;
@@ -15,21 +16,25 @@ import se.sics.ktoolbox.util.network.KAddress;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+/**
+ * NoWaitingCausalBroadcast component.
+ */
 public class NoWaitingCB extends ComponentDefinition {
 
     private static final Logger LOG = LoggerFactory.getLogger(NoWaitingCB.class);
-
     //*******************************CONNECTIONS********************************
     private Positive<ReliableBroadcast> rb = requires(ReliableBroadcast.class);
     private Negative<CausalOrderReliableBroadcast> crb = provides(CausalOrderReliableBroadcast.class);
     //**************************************************************************
-
-
     private KAddress selfAdr;
     private HashSet<KompicsEvent> delivered;
     private LinkedList<Pair<KAddress, KompicsEvent>> past;
 
-
+    /**
+     * Initialize component and connect handlers.
+     *
+     * @param init
+     */
     public NoWaitingCB(Init init) {
         this.selfAdr = init.selfAdr;
         this.delivered = new HashSet<>();
@@ -74,6 +79,9 @@ public class NoWaitingCB extends ComponentDefinition {
         }
     };
 
+    /**
+     * Init event contains the address of the node to use in network-communication.
+     */
     public static class Init extends se.sics.kompics.Init<NoWaitingCB> {
         public final KAddress selfAdr;
 

@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * LineId, totally ordered, unique.
+ *
  * @author Kim Hammar on 2017-04-08.
  */
 public class LineId implements Serializable, Comparable {

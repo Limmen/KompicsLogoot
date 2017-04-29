@@ -22,10 +22,17 @@ import se.sics.kompics.simulator.SimulationScenario;
 import se.sics.kompics.simulator.adaptor.distributions.extra.BasicIntSequentialDistribution;
 
 /**
+ * Class containing common simulation-scenarios.
+ *
  * @author Alex Ormenisan <aaor@kth.se>
  */
 public class CommonScenarios {
 
+    /**
+     * Simple boot scenario. Boots 50 peers and let them run for a while then terminate.
+     *
+     * @return simpleBootScenario
+     */
     public static SimulationScenario simpleBoot() {
         SimulationScenario scen = new SimulationScenario() {
             {

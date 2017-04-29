@@ -19,11 +19,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Common operations used in many simulation scenarios.
+ *
  * @author Kim Hammar on 2017-04-04.
  */
 public class CommonOperations {
     private static final Logger LOG = LoggerFactory.getLogger(CommonOperations.class);
 
+    /**
+     * Operation for doing system-setup tasks.
+     */
     public static Operation<SetupEvent> systemSetupOp = new Operation<SetupEvent>() {
         @Override
         public SetupEvent generate() {
@@ -36,6 +41,9 @@ public class CommonOperations {
         }
     };
 
+    /**
+     * Operation for booting the bootstrap-server.
+     */
     public static Operation<StartNodeEvent> startBootstrapServerOp = new Operation<StartNodeEvent>() {
 
         @Override
@@ -65,6 +73,9 @@ public class CommonOperations {
         }
     };
 
+    /**
+     * Starts a peer node from the HostMngrComp.class
+     */
     public static Operation1<StartNodeEvent, Integer> startNodeOp = new Operation1<StartNodeEvent, Integer>() {
 
         @Override
@@ -104,6 +115,9 @@ public class CommonOperations {
         }
     };
 
+    /**
+     * Operation for killing a node by generating a KillNodeEvent, takes pid as argument.
+     */
     public static Operation1 killNodeOp = new Operation1<KillNodeEvent, Integer>() {
         @Override
         public KillNodeEvent generate(final Integer self) {

@@ -34,6 +34,9 @@ import se.sics.ktoolbox.util.overlays.view.OverlayViewUpdate;
 import se.sics.ktoolbox.util.overlays.view.OverlayViewUpdatePort;
 
 /**
+ * Manager component that connects the application and initiates connection of broadcasts
+ * after being connected to the Croupier.
+ *
  * @author Alex Ormenisan <aaor@kth.se>
  */
 public class AppMngrComp extends ComponentDefinition {
@@ -57,10 +60,8 @@ public class AppMngrComp extends ComponentDefinition {
         selfAdr = init.selfAdr;
         logPrefix = "<nid:" + selfAdr.getId() + ">";
         LOG.info("{}initiating...", logPrefix);
-
         extPorts = init.extPorts;
         croupierId = init.croupierOId;
-
         subscribe(handleStart, control);
         subscribe(handleCroupierConnected, omngrPort);
     }
@@ -69,7 +70,6 @@ public class AppMngrComp extends ComponentDefinition {
         @Override
         public void handle(Start event) {
             LOG.info("{}starting...", logPrefix);
-
             pendingCroupierConnReq = new OMngrCroupier.ConnectRequest(croupierId, false);
             trigger(pendingCroupierConnReq, omngrPort);
         }
@@ -97,6 +97,9 @@ public class AppMngrComp extends ComponentDefinition {
         broadcastMngrComp = create(BroadCastMngrComp.class, new BroadCastMngrComp.Init(bcExtPorts, selfAdr, appComp));
     }
 
+    /**
+     * Initialization information, externalports, networkaddress of the peer and croupierOid.
+     */
     public static class Init extends se.sics.kompics.Init<AppMngrComp> {
 
         public final ExtPort extPorts;
@@ -110,6 +113,9 @@ public class AppMngrComp extends ComponentDefinition {
         }
     }
 
+    /**
+     * External ports, timer, network croupier, view from overlay
+     */
     public static class ExtPort {
 
         public final Positive<Timer> timerPort;

@@ -29,6 +29,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
+ * Utility class used when creating simulation scenarios.
+ *
  * @author Alex Ormenisan <aaor@kth.se>
  */
 public class ScenarioSetup {

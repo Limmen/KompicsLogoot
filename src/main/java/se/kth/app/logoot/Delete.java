@@ -3,6 +3,8 @@ package se.kth.app.logoot;
 import java.io.Serializable;
 
 /**
+ * DeleteOperation
+ *
  * @author Maxime Dufour on 2017-04-07.
  */
 public class Delete implements Operation, Serializable {

@@ -5,6 +5,8 @@ import se.sics.ktoolbox.util.identifiable.Identifier;
 import java.io.Serializable;
 
 /**
+ * PositionIdentifier (digit, site, clock)
+ *
  * @author Maxime Dufour on 2017-04-07.
  */
 public class Position implements Serializable, Comparable {

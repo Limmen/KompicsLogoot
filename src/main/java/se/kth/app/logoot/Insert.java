@@ -3,6 +3,8 @@ package se.kth.app.logoot;
 import java.io.Serializable;
 
 /**
+ * Insert-operation
+ *
  * @author Maxime Dufour on 2017-04-07.
  */
 public class Insert implements Operation, Serializable {

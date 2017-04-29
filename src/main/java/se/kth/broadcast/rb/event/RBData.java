@@ -1,4 +1,4 @@
-package se.kth.broadcast.rb.component;
+package se.kth.broadcast.rb.event;
 
 import se.sics.kompics.KompicsEvent;
 import se.sics.ktoolbox.util.network.KAddress;

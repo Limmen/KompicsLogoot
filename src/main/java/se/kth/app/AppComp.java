@@ -42,13 +42,15 @@ import java.util.List;
 import java.util.UUID;
 
 /**
+ * Top-level component of the application-logic at each peer.
+ * Contains the Logoot-Undo document and uses the broadcast abstraction to receive and send edititions.
+ *
  * @author Alex Ormenisan <aaor@kth.se>
  */
 public class AppComp extends ComponentDefinition {
 
     private static final Logger LOG = LoggerFactory.getLogger(AppComp.class);
     private String logPrefix = " ";
-
     //*******************************CONNECTIONS********************************
     Positive<Timer> timerPort = requires(Timer.class);
     Positive<CausalOrderReliableBroadcast> broadcastPort = requires(CausalOrderReliableBroadcast.class);
@@ -59,6 +61,10 @@ public class AppComp extends ComponentDefinition {
     private Document document;
     private int clock = 0;
 
+    /**
+     * Initializes component and subscribes handlers.
+     * @param init
+     */
     public AppComp(Init init) {
         selfAdr = init.selfAdr;
         logPrefix = "<nid:" + selfAdr.getId() + ">";
@@ -153,6 +159,9 @@ public class AppComp extends ComponentDefinition {
         clock = Math.max(clock, c);
     }
 
+    /**
+     * Initialization information, networkaddress and gradientOid.
+     */
     public static class Init extends se.sics.kompics.Init<AppComp> {
 
         public final KAddress selfAdr;

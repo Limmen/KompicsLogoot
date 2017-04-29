@@ -5,6 +5,9 @@ import se.kth.broadcast.rb.event.RBDeliver;
 import se.sics.kompics.PortType;
 
 /**
+ * Port exposed by a component providing ReliableBroadcast service.
+ * (+RBBroadcast, -RBDeliver)
+ *
  * Created by 62maxime on 03/04/2017.
  */
 public class ReliableBroadcast extends PortType {

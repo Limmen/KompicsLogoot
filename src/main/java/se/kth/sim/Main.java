@@ -23,6 +23,9 @@ import se.sics.kompics.simulator.SimulationScenario;
 import se.sics.kompics.simulator.run.LauncherComp;
 
 /**
+ *
+ * Program entry-point, boots a simple simulation scenario.
+ *
  * @author Alex Ormenisan <aaor@kth.se>
  */
 public class Main {

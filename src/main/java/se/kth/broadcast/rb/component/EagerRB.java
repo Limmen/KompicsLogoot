@@ -6,6 +6,7 @@ import se.kth.broadcast.gossipbeb.event.GBEBBroadcast;
 import se.kth.broadcast.gossipbeb.event.GBEBDeliver;
 import se.kth.broadcast.gossipbeb.port.GossipingBestEffortBroadcast;
 import se.kth.broadcast.rb.event.RBBroadcast;
+import se.kth.broadcast.rb.event.RBData;
 import se.kth.broadcast.rb.event.RBDeliver;
 import se.kth.broadcast.rb.port.ReliableBroadcast;
 import se.sics.kompics.*;
@@ -14,21 +15,25 @@ import se.sics.ktoolbox.util.network.KAddress;
 import java.util.HashSet;
 
 /**
+ * Eager ReliableBroadcast  component.
+ *
  * Created by 62maxime on 03/04/2017.
  */
 public class EagerRB extends ComponentDefinition {
 
-
     private static final Logger LOG = LoggerFactory.getLogger(EagerRB.class);
-
     //*******************************CONNECTIONS********************************
     private Positive<GossipingBestEffortBroadcast> gbeb = requires(GossipingBestEffortBroadcast.class);
     private Negative<ReliableBroadcast> rb = provides(ReliableBroadcast.class);
     //**************************************************************************
-
     private HashSet<KompicsEvent> delivered;
     private KAddress selfAdr;
 
+    /**
+     * Initialize component and subscribe to channels.
+     *
+     * @param init init event with selfAddress.
+     */
     public EagerRB(Init init) {
         this.delivered = new HashSet<>();
         this.selfAdr = init.selfAdr;
@@ -60,6 +65,9 @@ public class EagerRB extends ComponentDefinition {
     };
 
 
+    /**
+     * Init event contains the address of the node to use in network-communication.
+     */
     public static class Init extends se.sics.kompics.Init<EagerRB> {
 
         public final KAddress selfAdr;

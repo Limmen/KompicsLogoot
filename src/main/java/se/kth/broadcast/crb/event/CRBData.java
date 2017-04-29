@@ -1,4 +1,4 @@
-package se.kth.broadcast.crb.component;
+package se.kth.broadcast.crb.event;
 
 import se.kth.broadcast.gossipbeb.component.Pair;
 import se.sics.kompics.KompicsEvent;

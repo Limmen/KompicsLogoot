@@ -3,6 +3,8 @@ package se.kth.broadcast.gossipbeb.component;
 import com.google.common.base.Objects;
 
 /**
+ * PairContainer class.
+ *
  * Created by 62maxime on 03/04/2017.
  */
 public class Pair<T, T1> {

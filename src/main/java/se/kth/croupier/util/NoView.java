@@ -20,6 +20,8 @@ package se.kth.croupier.util;
 import se.sics.ktoolbox.util.update.View;
 
 /**
+ * Placeholder for view from PSS.
+ *
  * @author Alex Ormenisan <aaor@kth.se>
  */
 public class NoView implements View {
