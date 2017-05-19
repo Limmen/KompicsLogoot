@@ -66,12 +66,12 @@ mvn -Dtest=LogootInsertTest#insertionsCommuteTest test
 
 > deletionsCommuteTest
 ```sh
-mvn -Dtest=LogootDeleteTest#deletionsCommuteTest() test
+mvn -Dtest=LogootDeleteTest#deletionsCommuteTest test
 ```
 
 > redoTest
 ```sh
-mvn -Dtest=LogootRedoTest#redoTest() test
+mvn -Dtest=LogootRedoTest#redoTest test
 ```
 
 > undoTest
