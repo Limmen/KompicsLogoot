@@ -1,6 +1,6 @@
 # Conflict free p2p replicated datatypes
 
-**Course project, id2210-vt17**: 
+**Course project, id2210-vt17**:
 
 Java-Implementation of Logoot-Undo: *Distributed Collaborative Editing System on P2P networks*
 
@@ -33,8 +33,8 @@ mvn -Dtest={TestFileName}#{TestMethodName} test
 
 ### Logs
 
-Output of simulations are written to log-files in root-dir. 
-Such as simulation.log, simulation-2017-05-19.0.log, simulation-2017-05-19.1.log etc. 
+Output of simulations are written to log-files in root-dir.
+Such as simulation.log, simulation-2017-05-19.0.log, simulation-2017-05-19.1.log etc.
 
 For configuration see `src/main/resources/logback.xml`
 ### Running Test Examples
@@ -91,7 +91,7 @@ mvn '-Dtest=se.kth.tests.logoot.unit_tests.*Test' test
 
 ## Authors
 
-Template provided by 
+Template provided by
 
 Alex Ormenisan, aaor@kth.se
 
